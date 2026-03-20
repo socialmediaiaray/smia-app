@@ -530,8 +530,17 @@ function openLesson(lessonId) {
       <span class="modal-material-arrow">↓</span></a>`)];
 
   const materialsHtml = matItems.length ? `<div class="modal-materials"><div class="modal-materials-title">📚 Materiais desta aula</div>${matItems.join('')}</div>` : '';
+
+  // Mostra conteúdo de texto APENAS se houver texto real além dos links
   const textContent = lesson.content ? stripHtml(lesson.content).trim() : '';
-  const contentHtml = textContent.length > 30 ? `<hr class="modal-divider"><div class="md-content">${parseMarkdown(lesson.content)}</div>` : '';
+  const textWithoutLinks = textContent
+    .replace(/https?:\/\/\S+/g, '')
+    .replace(/👉🏻|👉|→|->|←|↗|↓/g, '')
+    .replace(/\s+/g, ' ').trim();
+  const hasRealText = textWithoutLinks.length > 80;
+  const contentHtml = hasRealText
+    ? `<hr class="modal-divider"><div class="md-content">${parseMarkdown(lesson.content)}</div>`
+    : '';
 
   document.getElementById('modalBody').innerHTML = `
     <div class="modal-checklist">
