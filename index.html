@@ -76,22 +76,31 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 
 /* CARDS */
 .cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px}
-.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;cursor:pointer;transition:all .25s}
-.card:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:0 8px 32px rgba(168,85,247,.15)}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;transition:all .25s}
+.card:hover{border-color:rgba(168,85,247,.4);transform:translateY(-2px);box-shadow:0 8px 32px rgba(168,85,247,.1)}
 .card.completed{border-color:rgba(34,197,94,.3);background:rgba(34,197,94,.04)}
-.card-top{padding:16px 16px 12px;display:flex;align-items:flex-start;gap:10px}
-.card-check{width:22px;height:22px;border-radius:6px;border:2px solid var(--border);flex-shrink:0;margin-top:2px;display:flex;align-items:center;justify-content:center;transition:all .2s;cursor:pointer}
+
+.card-top{padding:16px 16px 10px;display:flex;align-items:flex-start;gap:10px}
+.card-check{width:20px;height:20px;border-radius:5px;border:2px solid var(--border);flex-shrink:0;margin-top:2px;display:flex;align-items:center;justify-content:center;transition:all .2s;cursor:pointer}
 .card.completed .card-check{background:var(--success);border-color:var(--success)}
-.card-check::after{content:'';display:none;width:5px;height:9px;border:2px solid white;border-top:none;border-left:none;transform:rotate(45deg) translateY(-1px)}
+.card-check::after{content:'';display:none;width:4px;height:8px;border:2px solid white;border-top:none;border-left:none;transform:rotate(45deg) translateY(-1px)}
 .card.completed .card-check::after{display:block}
-.card-name{font-size:.9rem;font-weight:500;line-height:1.4;flex:1}
-.card-tags{display:flex;flex-wrap:wrap;gap:5px;padding:0 16px 12px}
-.tag{font-size:.72rem;padding:2px 9px;border-radius:100px;font-weight:500}
-.tag-video{background:rgba(168,85,247,.12);color:var(--accent);border:1px solid rgba(168,85,247,.2)}
-.tag-content{background:rgba(6,182,212,.12);color:var(--accent3);border:1px solid rgba(6,182,212,.2)}
-.tag-files{background:rgba(245,158,11,.12);color:var(--gold);border:1px solid rgba(245,158,11,.2)}
-.card-footer{border-top:1px solid var(--border);padding:10px 16px;display:flex;align-items:center;justify-content:space-between;font-size:.78rem;color:var(--muted)}
-.open-btn{color:var(--accent);font-size:.78rem;font-weight:500}
+.card-name{font-size:.88rem;font-weight:500;line-height:1.4;flex:1}
+
+/* CARD MATERIALS - the organized section */
+.card-materials{padding:0 14px 12px;display:flex;flex-direction:column;gap:6px}
+.material-item{display:flex;align-items:center;gap:8px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:7px 10px;font-size:.78rem;color:var(--muted);transition:all .2s}
+.material-item:hover{border-color:rgba(168,85,247,.3);color:var(--text)}
+.material-icon{font-size:.9rem;flex-shrink:0}
+.material-label{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.material-arrow{font-size:.7rem;color:var(--muted);flex-shrink:0}
+
+/* CARD FOOTER */
+.card-footer{border-top:1px solid var(--border);padding:10px 14px;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.watch-btn{display:inline-flex;align-items:center;gap:5px;background:var(--grad);border:none;border-radius:8px;padding:7px 14px;color:white;font-family:'DM Sans',sans-serif;font-size:.78rem;font-weight:600;cursor:pointer;text-decoration:none;transition:opacity .2s;flex-shrink:0}
+.watch-btn:hover{opacity:.85}
+.open-btn{color:var(--accent);font-size:.78rem;font-weight:500;cursor:pointer;background:none;border:none;font-family:'DM Sans',sans-serif}
+.open-btn:hover{text-decoration:underline}
 
 /* MODULE COLORS */
 .mod-0{background:rgba(168,85,247,.15);color:#a855f7}.mod-1{background:rgba(236,72,153,.15);color:#ec4899}
@@ -101,56 +110,73 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 .mod-8{background:rgba(168,85,247,.15);color:#a855f7}.mod-9{background:rgba(236,72,153,.15);color:#ec4899}
 
 /* MODAL */
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(8px);z-index:1000;display:flex;align-items:flex-start;justify-content:center;padding:24px 16px;overflow-y:auto;opacity:0;transition:opacity .25s;pointer-events:none}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);backdrop-filter:blur(8px);z-index:1000;display:flex;align-items:flex-start;justify-content:center;padding:24px 16px;overflow-y:auto;opacity:0;transition:opacity .25s;pointer-events:none}
 .modal-overlay.open{opacity:1;pointer-events:all}
-.modal{background:var(--surface);border:1px solid var(--border);border-radius:20px;width:100%;max-width:680px;margin:auto;transform:translateY(20px);transition:transform .3s ease;overflow:hidden}
+.modal{background:var(--surface);border:1px solid var(--border);border-radius:20px;width:100%;max-width:700px;margin:auto;transform:translateY(20px);transition:transform .3s ease;overflow:hidden}
 .modal-overlay.open .modal{transform:translateY(0)}
-.modal-header{padding:24px 24px 16px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;gap:12px}
-.modal-check{width:28px;height:28px;border-radius:8px;border:2px solid var(--border);flex-shrink:0;margin-top:3px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s}
+
+.modal-header{padding:20px 20px 14px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;gap:12px}
+.modal-check{width:26px;height:26px;border-radius:7px;border:2px solid var(--border);flex-shrink:0;margin-top:2px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s}
 .modal-check.done{background:var(--success);border-color:var(--success)}
-.modal-check.done::after{content:'';display:block;width:6px;height:11px;border:2px solid white;border-top:none;border-left:none;transform:rotate(45deg) translateY(-1px)}
-.modal-title{font-family:'Syne',sans-serif;font-weight:700;font-size:1.15rem;line-height:1.35;flex:1}
-.modal-close{background:var(--surface2);border:none;border-radius:8px;width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--muted);font-size:1.1rem;flex-shrink:0;transition:all .2s}
+.modal-check.done::after{content:'';display:block;width:5px;height:10px;border:2px solid white;border-top:none;border-left:none;transform:rotate(45deg) translateY(-1px)}
+.modal-title{font-family:'Syne',sans-serif;font-weight:700;font-size:1.1rem;line-height:1.35;flex:1}
+.modal-close{background:var(--surface2);border:none;border-radius:8px;width:30px;height:30px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--muted);font-size:1rem;flex-shrink:0;transition:all .2s}
 .modal-close:hover{background:var(--border);color:var(--text)}
-.modal-tags{display:flex;gap:6px;flex-wrap:wrap;padding:12px 24px 0}
-.modal-body{padding:20px 24px 24px;max-height:62vh;overflow-y:auto}
+
+/* MODAL WATCH BTN */
+.modal-watch-row{padding:14px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px}
+.modal-watch-btn{display:inline-flex;align-items:center;gap:8px;background:var(--grad);border:none;border-radius:10px;padding:10px 20px;color:white;font-family:'DM Sans',sans-serif;font-size:.9rem;font-weight:600;cursor:pointer;text-decoration:none;transition:opacity .2s}
+.modal-watch-btn:hover{opacity:.85}
+.modal-watch-hint{font-size:.8rem;color:var(--muted)}
+
+.modal-body{padding:20px;max-height:60vh;overflow-y:auto}
 .modal-body::-webkit-scrollbar{width:4px}
 .modal-body::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
 
-/* VIDEO */
-.video-wrap{background:#000;border-radius:12px;overflow:hidden;margin-bottom:20px;aspect-ratio:16/9;display:flex;align-items:center;justify-content:center}
-.video-wrap iframe{width:100%;height:100%;border:none}
-.video-link{display:inline-flex;align-items:center;gap:6px;background:rgba(168,85,247,.12);border:1px solid rgba(168,85,247,.3);border-radius:10px;padding:10px 16px;color:var(--accent);text-decoration:none;font-weight:500;font-size:.9rem;margin-bottom:20px;transition:all .2s}
-.video-link:hover{background:rgba(168,85,247,.2)}
+/* MATERIALS LIST IN MODAL */
+.modal-materials{margin-bottom:20px}
+.modal-materials-title{font-size:.78rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px}
+.modal-material-item{display:flex;align-items:center;gap:10px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:10px 14px;margin-bottom:8px;text-decoration:none;color:var(--text);transition:all .2s}
+.modal-material-item:hover{border-color:var(--accent);background:rgba(168,85,247,.06)}
+.modal-material-icon{font-size:1.1rem;flex-shrink:0;width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center}
+.icon-bg-blue{background:rgba(6,182,212,.15)}
+.icon-bg-gold{background:rgba(245,158,11,.15)}
+.icon-bg-purple{background:rgba(168,85,247,.15)}
+.icon-bg-green{background:rgba(34,197,94,.15)}
+.icon-bg-pink{background:rgba(236,72,153,.15)}
+.modal-material-text{}
+.modal-material-label{font-size:.88rem;font-weight:500;display:block}
+.modal-material-type{font-size:.75rem;color:var(--muted)}
+.modal-material-arrow{margin-left:auto;color:var(--muted);font-size:.8rem}
 
-/* FILES */
-.files-section{margin-top:16px}
-.files-title{font-size:.82rem;color:var(--muted);margin-bottom:8px;font-weight:500}
-.file-pill{display:inline-flex;align-items:center;gap:6px;background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.2);border-radius:8px;padding:8px 12px;color:var(--gold);text-decoration:none;font-size:.83rem;margin-right:8px;margin-bottom:8px;transition:all .2s}
-.file-pill:hover{background:rgba(245,158,11,.18)}
+/* DIVIDER */
+.modal-divider{border:none;border-top:1px solid var(--border);margin:16px 0}
 
 /* MARKDOWN */
-.md-content{line-height:1.7;font-size:.92rem}
-.md-content h1,.md-content h2{font-family:'Syne',sans-serif;font-weight:700;margin:20px 0 10px;line-height:1.3}
-.md-content h1{font-size:1.15rem}.md-content h2{font-size:1rem}
-.md-content h3,.md-content h4{font-weight:600;font-size:.92rem;margin:14px 0 6px}
-.md-content p{margin-bottom:10px;color:var(--muted)}
+.md-content{line-height:1.7;font-size:.91rem}
+.md-content h1,.md-content h2{font-family:'Syne',sans-serif;font-weight:700;margin:20px 0 8px;line-height:1.3;color:var(--text)}
+.md-content h1{font-size:1.1rem}.md-content h2{font-size:.98rem}
+.md-content h3,.md-content h4{font-weight:600;font-size:.9rem;margin:12px 0 5px;color:var(--text)}
+.md-content p{margin-bottom:8px;color:var(--muted)}
 .md-content strong{color:var(--text);font-weight:600}
 .md-content em{color:var(--muted);font-style:italic}
-.md-content ul,.md-content ol{padding-left:20px;margin-bottom:10px}
-.md-content li{margin-bottom:4px;color:var(--muted)}
-.md-content a{color:var(--accent);text-decoration:none;border-bottom:1px solid rgba(168,85,247,.3);transition:border-color .2s}
+.md-content ul,.md-content ol{padding-left:18px;margin-bottom:8px}
+.md-content li{margin-bottom:3px;color:var(--muted)}
+.md-content a{color:var(--accent);text-decoration:none;border-bottom:1px solid rgba(168,85,247,.3)}
 .md-content a:hover{border-color:var(--accent)}
-.md-content hr{border:none;border-top:1px solid var(--border);margin:16px 0}
-.md-content code{background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:1px 6px;font-size:.85em;font-family:monospace}
-.no-content{text-align:center;padding:32px;color:var(--muted);font-size:.9rem}
-.no-content .icon{font-size:2rem;margin-bottom:8px}
+.md-content hr{border:none;border-top:1px solid var(--border);margin:14px 0}
+.md-content code{background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:1px 6px;font-size:.84em;font-family:monospace}
+.no-content{text-align:center;padding:24px;color:var(--muted);font-size:.88rem}
+
+/* FILES */
+.file-pill{display:inline-flex;align-items:center;gap:6px;background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.2);border-radius:8px;padding:7px 12px;color:var(--gold);text-decoration:none;font-size:.82rem;margin-right:7px;margin-bottom:7px;transition:all .2s}
+.file-pill:hover{background:rgba(245,158,11,.18)}
 
 /* RESPONSIVE */
 @media(max-width:600px){
-  .header-inner{gap:10px}.logo{font-size:.95rem}.search-box{max-width:160px}
+  .header-inner{gap:10px}.logo{font-size:.95rem}.search-box{max-width:150px}
   .hero h1{font-size:1.6rem}.cards-grid{grid-template-columns:1fr}
-  .modal-body{max-height:70vh}
+  .modal-body{max-height:65vh}
 }
 </style>
 </head>
@@ -208,12 +234,18 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
       <div class="modal-title" id="modalTitle"></div>
       <button class="modal-close" onclick="closeModal()">✕</button>
     </div>
-    <div class="modal-tags" id="modalTags"></div>
+    <div class="modal-watch-row" id="modalWatchRow" style="display:none">
+      <a class="modal-watch-btn" id="modalWatchBtn" href="#" target="_blank">▶ Assistir aula na plataforma</a>
+      <span class="modal-watch-hint">Abre no MemberKit</span>
+    </div>
     <div class="modal-body" id="modalBody"></div>
   </div>
 </div>
 
 <script>
+// ===== CONFIG =====
+const MEMBERKIT_BASE = 'https://the-owner-academy.memberkit.com.br/275132-social-media-ia';
+
 // ===== STATE =====
 let COURSE_DATA = null;
 let completedCards = JSON.parse(localStorage.getItem('smia_completed') || '{}');
@@ -221,7 +253,7 @@ let currentFilter = 'all';
 let currentSearch = '';
 let currentLesson = null;
 
-// ===== FETCH DATA =====
+// ===== FETCH =====
 async function loadCourse() {
   try {
     const res = await fetch('/api/course');
@@ -233,7 +265,7 @@ async function loadCourse() {
       <div class="error-state">
         <div class="error-box">
           <h3>⚠️ Não foi possível carregar</h3>
-          <p>Verifique se as variáveis de ambiente estão configuradas na Vercel e tente novamente.</p>
+          <p>Verifique se as variáveis de ambiente estão configuradas na Vercel.</p>
           <p style="margin-top:8px;font-size:.8rem;opacity:.6">${err.message}</p>
           <button class="retry-btn" onclick="loadCourse()">Tentar novamente</button>
         </div>
@@ -246,23 +278,19 @@ function getTotalLessons() {
   if (!COURSE_DATA) return 0;
   return COURSE_DATA.sections.reduce((s, sec) => s + sec.lessons.length, 0);
 }
-
 function getCompletedCount() {
   return Object.values(completedCards).filter(Boolean).length;
 }
-
 function getSectionProgress(section) {
   const total = section.lessons.length;
   if (!total) return 0;
   const done = section.lessons.filter(l => completedCards[l.id]).length;
   return Math.round((done / total) * 100);
 }
-
 function lessonMatchesFilter(lesson) {
   if (currentSearch) {
     const q = currentSearch.toLowerCase();
-    if (!lesson.title.toLowerCase().includes(q) &&
-        !(lesson.content || '').toLowerCase().includes(q)) return false;
+    if (!lesson.title.toLowerCase().includes(q) && !(lesson.content||'').toLowerCase().includes(q)) return false;
   }
   switch (currentFilter) {
     case 'video': return !!lesson.video;
@@ -274,9 +302,71 @@ function lessonMatchesFilter(lesson) {
   }
 }
 
-// ===== MARKDOWN =====
+// ===== MEMBERKIT URL =====
+function getMemberkitUrl(lesson) {
+  const slug = lesson.slug || lesson.title.toLowerCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+  return `${MEMBERKIT_BASE}/${lesson.id}-${slug}`;
+}
+
+// ===== EXTRACT LINKS FROM HTML CONTENT =====
+function extractLinks(html) {
+  if (!html) return [];
+  const links = [];
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(html, 'text/html');
+  doc.querySelectorAll('a[href]').forEach(a => {
+    const href = a.getAttribute('href');
+    const text = a.textContent.trim();
+    if (href && href.startsWith('http') && text) {
+      links.push({ href, text });
+    }
+  });
+  return links;
+}
+
+// ===== LINK TYPE DETECTION =====
+function getLinkMeta(href, text) {
+  if (href.includes('canva.com')) return { icon: '🎨', type: 'Template Canva', bg: 'icon-bg-purple' };
+  if (href.includes('docs.google.com/document')) return { icon: '📄', type: 'Google Docs', bg: 'icon-bg-blue' };
+  if (href.includes('docs.google.com/spreadsheets')) return { icon: '📊', type: 'Planilha Google', bg: 'icon-bg-green' };
+  if (href.includes('drive.google.com')) return { icon: '📁', type: 'Google Drive', bg: 'icon-bg-gold' };
+  if (href.includes('youtube.com') || href.includes('youtu.be')) return { icon: '▶️', type: 'YouTube', bg: 'icon-bg-pink' };
+  if (href.includes('t.me') || href.includes('telegram')) return { icon: '✈️', type: 'Telegram', bg: 'icon-bg-blue' };
+  if (href.includes('trello.com')) return { icon: '📋', type: 'Trello', bg: 'icon-bg-blue' };
+  if (href.includes('autentique')) return { icon: '✍️', type: 'Contrato', bg: 'icon-bg-gold' };
+  if (href.includes('lovable.dev')) return { icon: '💜', type: 'Lovable', bg: 'icon-bg-purple' };
+  if (href.includes('chatgpt.com') || href.includes('openai.com')) return { icon: '🤖', type: 'ChatGPT', bg: 'icon-bg-green' };
+  if (href.includes('getninjas')) return { icon: '💼', type: 'GetNinjas', bg: 'icon-bg-gold' };
+  if (href.includes('facebook.com') || href.includes('meta.com')) return { icon: '📘', type: 'Meta', bg: 'icon-bg-blue' };
+  if (href.includes('apps.apple.com') || href.includes('play.google.com')) return { icon: '📱', type: 'App', bg: 'icon-bg-purple' };
+  return { icon: '🔗', type: 'Link', bg: 'icon-bg-blue' };
+}
+
+function cleanLinkText(text) {
+  // Remove URLs expostas como texto
+  if (text.startsWith('http') || text.startsWith('www')) return null;
+  if (text.length > 60) return text.substring(0, 57) + '...';
+  return text;
+}
+
+// ===== STRIP HTML =====
+function stripHtml(html) {
+  const doc = new DOMParser().parseFromString(html, 'text/html');
+  return doc.body.textContent || '';
+}
+
+// ===== MARKDOWN PARSER =====
 function parseMarkdown(text) {
   if (!text) return '';
+  // If it looks like HTML, return it cleaned (strip script/style but keep structure)
+  if (text.trim().startsWith('<')) {
+    const clean = text
+      .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '')
+      .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '');
+    return clean;
+  }
   return text
     .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
     .replace(/^#### (.+)$/gm,'<h4>$1</h4>')
@@ -296,35 +386,37 @@ function parseMarkdown(text) {
     .replace(/`(.+?)`/g,'<code>$1</code>');
 }
 
-// ===== VIDEO EMBED =====
-function getVideoEmbed(video) {
-  if (!video) return '';
-  const src = video.source || '';
-  const uid = video.uid || '';
+// ===== RENDER CARD MATERIALS =====
+function renderCardMaterials(lesson) {
+  const links = extractLinks(lesson.content || '');
+  const hasFiles = lesson.files && lesson.files.length;
+  if (!links.length && !hasFiles) return '';
 
-  // Panda Video
-  if (src === 'panda' && uid) {
-    return `<div class="video-wrap">
-      <iframe src="https://player.pandavideo.com.br/embed/?v=${uid}" allowfullscreen allow="autoplay"></iframe>
-    </div>`;
+  const items = [];
+
+  links.slice(0, 3).forEach(link => {
+    const text = cleanLinkText(link.text);
+    if (!text) return;
+    const meta = getLinkMeta(link.href, text);
+    items.push(`<a class="material-item" href="${link.href}" target="_blank" rel="noopener" onclick="event.stopPropagation()">
+      <span class="material-icon">${meta.icon}</span>
+      <span class="material-label">${text}</span>
+      <span class="material-arrow">↗</span>
+    </a>`);
+  });
+
+  if (hasFiles) {
+    lesson.files.slice(0, 2).forEach(f => {
+      items.push(`<a class="material-item" href="${f.url}" target="_blank" rel="noopener" onclick="event.stopPropagation()">
+        <span class="material-icon">📎</span>
+        <span class="material-label">${f.filename || 'Arquivo'}</span>
+        <span class="material-arrow">↓</span>
+      </a>`);
+    });
   }
-  // Vimeo
-  if (src === 'vimeo' && uid) {
-    return `<div class="video-wrap">
-      <iframe src="https://player.vimeo.com/video/${uid}" allowfullscreen></iframe>
-    </div>`;
-  }
-  // YouTube
-  if (src === 'youtube' && uid) {
-    return `<div class="video-wrap">
-      <iframe src="https://www.youtube.com/embed/${uid}" allowfullscreen></iframe>
-    </div>`;
-  }
-  // Fallback — link externo
-  if (video.image) {
-    return `<a class="video-link" href="#" target="_blank">▶ Assistir aula</a>`;
-  }
-  return '';
+
+  if (!items.length) return '';
+  return `<div class="card-materials">${items.join('')}</div>`;
 }
 
 // ===== RENDER =====
@@ -350,31 +442,24 @@ function renderApp() {
     const filtered = section.lessons.filter(lessonMatchesFilter);
     if (!filtered.length) return;
     anyVisible = true;
-
     const prog = getSectionProgress(section);
 
     const cardsHtml = filtered.map(lesson => {
       const isDone = !!completedCards[lesson.id];
-      const hasVideo = !!lesson.video;
-      const hasContent = !!(lesson.content && lesson.content.trim());
-      const hasFiles = !!(lesson.files && lesson.files.length);
+      const mkUrl = getMemberkitUrl(lesson);
+      const materials = renderCardMaterials(lesson);
 
-      return `
-        <div class="card ${isDone ? 'completed' : ''}" onclick="openLesson(${lesson.id})">
-          <div class="card-top">
-            <div class="card-check" onclick="event.stopPropagation();toggleDone(${lesson.id})"></div>
-            <div class="card-name">${lesson.title}</div>
-          </div>
-          <div class="card-tags">
-            ${hasVideo ? '<span class="tag tag-video">🎬 Vídeo</span>' : ''}
-            ${hasContent ? '<span class="tag tag-content">📄 Conteúdo</span>' : ''}
-            ${hasFiles ? `<span class="tag tag-files">📎 ${lesson.files.length} arquivo${lesson.files.length > 1 ? 's' : ''}</span>` : ''}
-          </div>
-          <div class="card-footer">
-            <span style="color:var(--muted);font-size:.75rem">Aula ${lesson.position || (si + 1)}</span>
-            <span class="open-btn">Abrir →</span>
-          </div>
-        </div>`;
+      return `<div class="card ${isDone ? 'completed' : ''}">
+        <div class="card-top" onclick="openLesson(${lesson.id})" style="cursor:pointer">
+          <div class="card-check" onclick="event.stopPropagation();toggleDone(${lesson.id})"></div>
+          <div class="card-name">${lesson.title}</div>
+        </div>
+        ${materials}
+        <div class="card-footer">
+          <a class="watch-btn" href="${mkUrl}" target="_blank" rel="noopener">▶ Assistir</a>
+          <button class="open-btn" onclick="openLesson(${lesson.id})">Ver material →</button>
+        </div>
+      </div>`;
     }).join('');
 
     html += `
@@ -387,9 +472,7 @@ function renderApp() {
           </div>
           <div style="display:flex;align-items:center;gap:8px">
             <div class="module-progress-wrap">
-              <div class="module-progress-bar">
-                <div class="module-progress-fill" style="width:${prog}%"></div>
-              </div>
+              <div class="module-progress-bar"><div class="module-progress-fill" style="width:${prog}%"></div></div>
               <span class="module-progress-pct">${prog}%</span>
             </div>
             <span class="chevron">▾</span>
@@ -401,9 +484,7 @@ function renderApp() {
 
   if (!anyVisible) {
     html = `<div style="text-align:center;padding:60px 20px;color:var(--muted)">
-      <div style="font-size:3rem;margin-bottom:12px">🔍</div>
-      <p>Nenhuma aula encontrada</p>
-    </div>`;
+      <div style="font-size:3rem;margin-bottom:12px">🔍</div><p>Nenhuma aula encontrada</p></div>`;
   }
 
   document.getElementById('appContent').innerHTML = html;
@@ -433,39 +514,69 @@ function openLesson(lessonId) {
   document.getElementById('modalTitle').textContent = lesson.title;
   document.getElementById('modalCheck').className = 'modal-check' + (isDone ? ' done' : '');
 
-  // Tags
-  const tags = [];
-  if (lesson.video) tags.push('<span class="tag tag-video">🎬 Vídeo</span>');
-  if (lesson.content && lesson.content.trim()) tags.push('<span class="tag tag-content">📄 Conteúdo</span>');
-  if (lesson.files && lesson.files.length) tags.push(`<span class="tag tag-files">📎 ${lesson.files.length} arquivo(s)</span>`);
-  document.getElementById('modalTags').innerHTML = tags.join('');
+  // Watch button
+  const watchRow = document.getElementById('modalWatchRow');
+  const watchBtn = document.getElementById('modalWatchBtn');
+  watchRow.style.display = 'flex';
+  watchBtn.href = getMemberkitUrl(lesson);
 
   // Body
   let body = '';
+  const links = extractLinks(lesson.content || '');
 
-  // Video
-  if (lesson.video) {
-    body += getVideoEmbed(lesson.video);
+  // Materials section
+  if (links.length || (lesson.files && lesson.files.length)) {
+    const materialItems = [];
+
+    links.forEach(link => {
+      const text = cleanLinkText(link.text);
+      if (!text) return;
+      const meta = getLinkMeta(link.href, text);
+      materialItems.push(`
+        <a class="modal-material-item" href="${link.href}" target="_blank" rel="noopener">
+          <div class="modal-material-icon ${meta.bg}">${meta.icon}</div>
+          <div class="modal-material-text">
+            <span class="modal-material-label">${text}</span>
+            <span class="modal-material-type">${meta.type}</span>
+          </div>
+          <span class="modal-material-arrow">↗</span>
+        </a>`);
+    });
+
+    if (lesson.files && lesson.files.length) {
+      lesson.files.forEach(f => {
+        materialItems.push(`
+          <a class="modal-material-item" href="${f.url}" target="_blank" rel="noopener">
+            <div class="modal-material-icon icon-bg-gold">📎</div>
+            <div class="modal-material-text">
+              <span class="modal-material-label">${f.filename || 'Arquivo'}</span>
+              <span class="modal-material-type">Arquivo anexo</span>
+            </div>
+            <span class="modal-material-arrow">↓</span>
+          </a>`);
+      });
+    }
+
+    if (materialItems.length) {
+      body += `<div class="modal-materials">
+        <div class="modal-materials-title">📚 Materiais desta aula</div>
+        ${materialItems.join('')}
+      </div>`;
+    }
   }
 
-  // Content
-  if (lesson.content && lesson.content.trim()) {
+  // Text content (strip links already shown above, show remaining text)
+  const textContent = lesson.content ? stripHtml(lesson.content).trim() : '';
+  if (textContent && textContent.length > 30) {
+    if (body) body += '<hr class="modal-divider">';
     body += `<div class="md-content">${parseMarkdown(lesson.content)}</div>`;
   }
 
-  // Files
-  if (lesson.files && lesson.files.length) {
-    body += `<div class="files-section">
-      <div class="files-title">📎 Arquivos desta aula</div>
-      ${lesson.files.map(f => `
-        <a class="file-pill" href="${f.url}" target="_blank" rel="noopener">
-          📄 ${f.filename || 'Arquivo'}
-        </a>`).join('')}
-    </div>`;
-  }
-
   if (!body) {
-    body = `<div class="no-content"><div class="icon">🎬</div><p>Conteúdo disponível na plataforma MemberKit.</p></div>`;
+    body = `<div class="no-content">
+      <div style="font-size:2rem;margin-bottom:8px">🎬</div>
+      <p>Clique em "Assistir aula" para acessar o conteúdo na plataforma.</p>
+    </div>`;
   }
 
   document.getElementById('modalBody').innerHTML = body;
@@ -487,7 +598,6 @@ function closeModal() {
   document.body.style.overflow = '';
   currentLesson = null;
 }
-
 function handleOverlayClick(e) {
   if (e.target === document.getElementById('modalOverlay')) closeModal();
 }
