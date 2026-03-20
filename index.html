@@ -4,187 +4,197 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Mentoria Social Media IA 🤖🧠</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg:#0a0a0f; --surface:#13131a; --surface2:#1c1c27; --border:#2a2a3a;
-  --accent:#a855f7; --accent2:#ec4899; --accent3:#06b6d4; --gold:#f59e0b;
-  --text:#f0f0f8; --muted:#8888aa; --success:#22c55e; --radius:14px;
-  --grad:linear-gradient(135deg,#a855f7,#ec4899);
+  --bg:#071e2a; --surface:#0d2d3e; --surface2:#0f3347; --border:#1a4a62;
+  --accent:#083a4f; --cream:#e5e1dd; --cream2:#f0ece8; --gold:#c9a96e;
+  --text:#e5e1dd; --muted:#8aacbb; --success:#4caf82; --danger:#e05c5c;
+  --radius:12px; --grad:linear-gradient(135deg,#0d6e8a,#083a4f);
+  --grad-warm:linear-gradient(135deg,#c9a96e,#a8845a);
 }
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+body{font-family:'Raleway',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
 
-/* HEADER */
-.header{position:sticky;top:0;z-index:100;background:rgba(10,10,15,0.92);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:0 24px}
-.header-inner{max-width:1100px;margin:0 auto;height:64px;display:flex;align-items:center;gap:16px;justify-content:space-between}
-.logo{font-family:'Syne',sans-serif;font-weight:800;font-size:1.1rem;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;flex-shrink:0}
-.search-box{flex:1;max-width:400px;position:relative}
-.search-box input{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:9px 16px 9px 40px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:0.9rem;outline:none;transition:border-color .2s}
-.search-box input:focus{border-color:var(--accent)}
+.header{position:sticky;top:0;z-index:100;background:rgba(7,30,42,.95);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:0 24px}
+.header-inner{max-width:1200px;margin:0 auto;height:66px;display:flex;align-items:center;gap:20px;justify-content:space-between}
+.logo{font-family:'Playfair Display',serif;font-weight:700;font-style:italic;font-size:1.25rem;color:var(--cream);flex-shrink:0}
+.logo span{color:var(--gold);font-style:normal}
+.search-box{flex:1;max-width:420px;position:relative}
+.search-box input{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:9px 16px 9px 40px;color:var(--text);font-family:'Raleway',sans-serif;font-size:.88rem;outline:none;transition:border-color .2s}
+.search-box input:focus{border-color:var(--gold)}
 .search-box input::placeholder{color:var(--muted)}
-.search-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--muted)}
-.progress-badge{display:flex;align-items:center;gap:8px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:8px 14px;font-size:.85rem;white-space:nowrap;flex-shrink:0}
-.progress-badge .prog-num{font-family:'Syne',sans-serif;font-weight:700;color:var(--accent)}
+.search-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:.9rem}
+.progress-badge{display:flex;align-items:center;gap:10px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:8px 16px;font-size:.82rem;white-space:nowrap;flex-shrink:0}
+.progress-badge .prog-num{font-family:'Playfair Display',serif;font-weight:700;color:var(--gold);font-size:1rem}
 
-/* MAIN */
-.main{max-width:1100px;margin:0 auto;padding:32px 24px 80px;position:relative;z-index:1}
+.main{max-width:1200px;margin:0 auto;padding:40px 24px 100px}
 
-/* HERO */
-.hero{text-align:center;padding:48px 0 40px;position:relative}
-.hero::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:600px;height:300px;background:radial-gradient(ellipse,rgba(168,85,247,.15) 0%,transparent 70%);pointer-events:none}
-.hero-tag{display:inline-flex;align-items:center;gap:8px;background:rgba(168,85,247,.1);border:1px solid rgba(168,85,247,.3);border-radius:100px;padding:6px 16px;font-size:.8rem;color:var(--accent);margin-bottom:20px}
-.hero h1{font-family:'Syne',sans-serif;font-weight:800;font-size:clamp(1.8rem,4vw,2.8rem);line-height:1.15;margin-bottom:12px}
-.hero h1 .highlight{background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.hero p{color:var(--muted);font-size:1rem;max-width:480px;margin:0 auto 32px;line-height:1.6}
-.stats-row{display:flex;justify-content:center;gap:16px;flex-wrap:wrap}
-.stat-pill{display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--border);border-radius:100px;padding:8px 18px;font-size:.85rem}
-.stat-pill .n{font-family:'Syne',sans-serif;font-weight:700;color:var(--accent)}
+.hero{text-align:center;padding:56px 0 48px;position:relative}
+.hero::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:700px;height:350px;background:radial-gradient(ellipse,rgba(13,110,138,.12) 0%,transparent 70%);pointer-events:none}
+.hero-tag{display:inline-flex;align-items:center;gap:8px;background:rgba(201,169,110,.1);border:1px solid rgba(201,169,110,.3);border-radius:100px;padding:6px 18px;font-size:.78rem;color:var(--gold);margin-bottom:22px;font-weight:600;letter-spacing:.05em;text-transform:uppercase}
+.hero h1{font-family:'Playfair Display',serif;font-weight:700;font-size:clamp(2rem,4.5vw,3.2rem);line-height:1.12;margin-bottom:14px;color:var(--cream)}
+.hero h1 em{font-style:italic;color:var(--gold)}
+.hero p{color:var(--muted);font-size:.98rem;max-width:500px;margin:0 auto 36px;line-height:1.7}
+.stats-row{display:flex;justify-content:center;gap:14px;flex-wrap:wrap}
+.stat-pill{display:flex;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--border);border-radius:100px;padding:9px 20px;font-size:.84rem}
+.stat-pill .n{font-family:'Playfair Display',serif;font-weight:700;color:var(--gold);font-size:1rem}
 
-/* LOADING */
 .loading-state{text-align:center;padding:80px 20px;color:var(--muted)}
-.spinner{width:40px;height:40px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 16px}
+.spinner{width:40px;height:40px;border:3px solid var(--border);border-top-color:var(--gold);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 16px}
 @keyframes spin{to{transform:rotate(360deg)}}
 .error-state{text-align:center;padding:60px 20px}
-.error-box{display:inline-block;background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.25);border-radius:14px;padding:24px 32px;max-width:480px}
-.error-box h3{color:#ef4444;margin-bottom:8px;font-family:'Syne',sans-serif}
-.error-box p{color:var(--muted);font-size:.9rem;line-height:1.6}
-.retry-btn{margin-top:16px;background:var(--accent);border:none;border-radius:8px;padding:10px 20px;color:white;font-family:'DM Sans',sans-serif;font-size:.9rem;font-weight:500;cursor:pointer;transition:opacity .2s}
+.error-box{display:inline-block;background:rgba(224,92,92,.07);border:1px solid rgba(224,92,92,.25);border-radius:14px;padding:28px 36px;max-width:500px}
+.error-box h3{color:var(--danger);margin-bottom:8px;font-family:'Playfair Display',serif;font-size:1.2rem}
+.error-box p{color:var(--muted);font-size:.88rem;line-height:1.6}
+.retry-btn{margin-top:16px;background:var(--grad);border:none;border-radius:8px;padding:10px 22px;color:white;font-family:'Raleway',sans-serif;font-size:.88rem;font-weight:600;cursor:pointer;transition:opacity .2s}
 .retry-btn:hover{opacity:.85}
 
-/* FILTER */
-.filter-row{display:flex;gap:8px;margin-bottom:28px;flex-wrap:wrap;align-items:center}
-.filter-label{font-size:.8rem;color:var(--muted);margin-right:4px}
-.filter-btn{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:6px 14px;color:var(--muted);font-family:'DM Sans',sans-serif;font-size:.82rem;cursor:pointer;transition:all .2s}
-.filter-btn:hover,.filter-btn.active{background:rgba(168,85,247,.12);border-color:var(--accent);color:var(--accent)}
+.filter-row{display:flex;gap:8px;margin-bottom:32px;flex-wrap:wrap;align-items:center}
+.filter-label{font-size:.75rem;color:var(--muted);margin-right:4px;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+.filter-btn{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:6px 14px;color:var(--muted);font-family:'Raleway',sans-serif;font-size:.8rem;cursor:pointer;transition:all .2s;font-weight:500}
+.filter-btn:hover,.filter-btn.active{background:rgba(201,169,110,.12);border-color:var(--gold);color:var(--gold)}
 
-/* MODULE */
-.module-section{margin-bottom:36px;animation:fadeUp .4s ease both}
+.module-section{margin-bottom:40px;animation:fadeUp .4s ease both}
 @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
-.module-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;cursor:pointer;user-select:none;gap:12px}
-.module-title-wrap{display:flex;align-items:center;gap:12px;flex:1}
-.module-num{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:800;font-size:.85rem;flex-shrink:0}
-.module-title{font-family:'Syne',sans-serif;font-weight:700;font-size:1rem}
-.mod-count{font-size:.78rem;color:var(--muted);background:var(--surface2);border:1px solid var(--border);padding:3px 10px;border-radius:100px}
-.module-progress-wrap{display:flex;align-items:center;gap:8px;flex-shrink:0}
-.module-progress-bar{width:80px;height:4px;background:var(--border);border-radius:2px;overflow:hidden}
-.module-progress-fill{height:100%;background:var(--grad);border-radius:2px;transition:width .5s ease}
-.module-progress-pct{font-size:.75rem;color:var(--muted);width:30px;text-align:right;flex-shrink:0}
-.chevron{color:var(--muted);font-size:.9rem;transition:transform .3s;flex-shrink:0}
+.module-header{display:flex;align-items:stretch;margin-bottom:18px;cursor:pointer;user-select:none;background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden;transition:border-color .2s}
+.module-header:hover{border-color:var(--gold)}
+.module-num-badge{width:72px;flex-shrink:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px 8px}
+.module-num-label{font-size:.58rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.55);margin-bottom:2px}
+.module-num-val{font-family:'Playfair Display',serif;font-weight:700;font-size:1.6rem;line-height:1}
+.module-info{flex:1;padding:14px 18px;display:flex;flex-direction:column;justify-content:center}
+.module-name-subtitle{font-size:.65rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:3px}
+.module-name{font-family:'Playfair Display',serif;font-style:italic;font-weight:600;font-size:1.08rem;color:var(--cream)}
+.module-meta-row{display:flex;align-items:center;gap:10px;margin-top:8px}
+.mod-count{font-size:.7rem;color:var(--muted);background:var(--surface2);border:1px solid var(--border);padding:2px 9px;border-radius:100px;font-weight:500}
+.module-progress-side{width:110px;flex-shrink:0;padding:14px 18px;display:flex;flex-direction:column;align-items:flex-end;justify-content:center;gap:6px;border-left:1px solid var(--border)}
+.module-progress-bar{width:72px;height:4px;background:var(--border);border-radius:2px;overflow:hidden}
+.module-progress-fill{height:100%;background:var(--grad-warm);border-radius:2px;transition:width .5s ease}
+.module-progress-pct{font-size:.72rem;color:var(--muted);font-weight:600}
+.chevron{color:var(--muted);font-size:.8rem;transition:transform .3s}
 .module-section.collapsed .chevron{transform:rotate(-90deg)}
 .module-section.collapsed .cards-grid{display:none}
 
-/* CARDS */
-.cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px}
-.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;transition:all .25s}
-.card:hover{border-color:rgba(168,85,247,.4);transform:translateY(-2px);box-shadow:0 8px 32px rgba(168,85,247,.1)}
-.card.completed{border-color:rgba(34,197,94,.3);background:rgba(34,197,94,.04)}
+.mod-color-0{background:linear-gradient(135deg,#083a4f,#0a4d68)}
+.mod-color-1{background:linear-gradient(135deg,#0d5c3a,#0a4a2e)}
+.mod-color-2{background:linear-gradient(135deg,#5c3d0d,#4a300a)}
+.mod-color-3{background:linear-gradient(135deg,#3d0d5c,#2e0a4a)}
+.mod-color-4{background:linear-gradient(135deg,#5c0d1f,#4a0a18)}
+.mod-color-5{background:linear-gradient(135deg,#0d3d5c,#0a2e4a)}
+.mod-color-6{background:linear-gradient(135deg,#3d5c0d,#2e4a0a)}
+.mod-color-7{background:linear-gradient(135deg,#c9a96e,#a8845a)}
 
-.card-top{padding:16px 16px 10px;display:flex;align-items:flex-start;gap:10px}
+.cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:14px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;transition:all .25s}
+.card:hover{border-color:rgba(201,169,110,.4);transform:translateY(-2px);box-shadow:0 8px 32px rgba(0,0,0,.3)}
+.card.completed{border-color:rgba(76,175,130,.35);background:rgba(76,175,130,.04)}
+
+.card-top{padding:14px 14px 10px;display:flex;align-items:flex-start;gap:10px}
 .card-check{width:20px;height:20px;border-radius:5px;border:2px solid var(--border);flex-shrink:0;margin-top:2px;display:flex;align-items:center;justify-content:center;transition:all .2s;cursor:pointer}
 .card.completed .card-check{background:var(--success);border-color:var(--success)}
 .card-check::after{content:'';display:none;width:4px;height:8px;border:2px solid white;border-top:none;border-left:none;transform:rotate(45deg) translateY(-1px)}
 .card.completed .card-check::after{display:block}
-.card-name{font-size:.88rem;font-weight:500;line-height:1.4;flex:1}
+.card-name{font-size:.86rem;font-weight:500;line-height:1.45;flex:1;color:var(--cream)}
 
-/* CARD MATERIALS - the organized section */
-.card-materials{padding:0 14px 12px;display:flex;flex-direction:column;gap:6px}
-.material-item{display:flex;align-items:center;gap:8px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:7px 10px;font-size:.78rem;color:var(--muted);transition:all .2s}
-.material-item:hover{border-color:rgba(168,85,247,.3);color:var(--text)}
-.material-icon{font-size:.9rem;flex-shrink:0}
+.card-checklist{padding:0 14px 10px}
+.card-checklist-bar{height:3px;background:var(--border);border-radius:2px;overflow:hidden;margin-bottom:8px}
+.card-checklist-fill{height:100%;background:var(--grad-warm);border-radius:2px;transition:width .4s}
+.card-checklist-items{display:flex;flex-direction:column;gap:4px}
+.card-cl-item{display:flex;align-items:center;gap:7px;cursor:pointer;font-size:.74rem;color:var(--muted);padding:3px 5px;border-radius:5px;transition:background .15s}
+.card-cl-item:hover{background:var(--surface2)}
+.card-cl-item.checked{opacity:.55;text-decoration:line-through}
+.cl-dot{width:14px;height:14px;border-radius:4px;border:1.5px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.card-cl-item.checked .cl-dot{background:var(--success);border-color:var(--success)}
+.card-cl-item.checked .cl-dot::after{content:'';display:block;width:3px;height:6px;border:1.5px solid white;border-top:none;border-left:none;transform:rotate(45deg) translateY(-1px)}
+
+.card-materials{padding:0 14px 10px;display:flex;flex-direction:column;gap:5px}
+.material-item{display:flex;align-items:center;gap:8px;background:var(--surface2);border:1px solid var(--border);border-radius:7px;padding:6px 9px;font-size:.74rem;color:var(--muted);transition:all .2s;text-decoration:none}
+.material-item:hover{border-color:rgba(201,169,110,.35);color:var(--cream)}
+.material-icon{font-size:.85rem;flex-shrink:0}
 .material-label{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.material-arrow{font-size:.7rem;color:var(--muted);flex-shrink:0}
+.material-arrow{font-size:.68rem;flex-shrink:0}
 
-/* CARD FOOTER */
 .card-footer{border-top:1px solid var(--border);padding:10px 14px;display:flex;align-items:center;justify-content:space-between;gap:8px}
-.watch-btn{display:inline-flex;align-items:center;gap:5px;background:var(--grad);border:none;border-radius:8px;padding:7px 14px;color:white;font-family:'DM Sans',sans-serif;font-size:.78rem;font-weight:600;cursor:pointer;text-decoration:none;transition:opacity .2s;flex-shrink:0}
+.watch-btn{display:inline-flex;align-items:center;gap:5px;background:var(--grad);border:none;border-radius:7px;padding:7px 13px;color:white;font-family:'Raleway',sans-serif;font-size:.75rem;font-weight:700;cursor:pointer;text-decoration:none;transition:opacity .2s;flex-shrink:0;letter-spacing:.02em}
 .watch-btn:hover{opacity:.85}
-.open-btn{color:var(--accent);font-size:.78rem;font-weight:500;cursor:pointer;background:none;border:none;font-family:'DM Sans',sans-serif}
+.open-btn{color:var(--gold);font-size:.75rem;font-weight:600;cursor:pointer;background:none;border:none;font-family:'Raleway',sans-serif}
 .open-btn:hover{text-decoration:underline}
 
-/* MODULE COLORS */
-.mod-0{background:rgba(168,85,247,.15);color:#a855f7}.mod-1{background:rgba(236,72,153,.15);color:#ec4899}
-.mod-2{background:rgba(6,182,212,.15);color:#06b6d4}.mod-3{background:rgba(245,158,11,.15);color:#f59e0b}
-.mod-4{background:rgba(34,197,94,.15);color:#22c55e}.mod-5{background:rgba(99,102,241,.15);color:#6366f1}
-.mod-6{background:rgba(239,68,68,.15);color:#ef4444}.mod-7{background:rgba(251,191,36,.15);color:#fbbf24}
-.mod-8{background:rgba(168,85,247,.15);color:#a855f7}.mod-9{background:rgba(236,72,153,.15);color:#ec4899}
-
-/* MODAL */
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);backdrop-filter:blur(8px);z-index:1000;display:flex;align-items:flex-start;justify-content:center;padding:24px 16px;overflow-y:auto;opacity:0;transition:opacity .25s;pointer-events:none}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.78);backdrop-filter:blur(10px);z-index:1000;display:flex;align-items:flex-start;justify-content:center;padding:24px 16px;overflow-y:auto;opacity:0;transition:opacity .25s;pointer-events:none}
 .modal-overlay.open{opacity:1;pointer-events:all}
-.modal{background:var(--surface);border:1px solid var(--border);border-radius:20px;width:100%;max-width:700px;margin:auto;transform:translateY(20px);transition:transform .3s ease;overflow:hidden}
+.modal{background:var(--surface);border:1px solid var(--border);border-radius:18px;width:100%;max-width:700px;margin:auto;transform:translateY(24px);transition:transform .3s ease;overflow:hidden}
 .modal-overlay.open .modal{transform:translateY(0)}
-
-.modal-header{padding:20px 20px 14px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;gap:12px}
+.modal-header{padding:22px 22px 14px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;gap:12px}
 .modal-check{width:26px;height:26px;border-radius:7px;border:2px solid var(--border);flex-shrink:0;margin-top:2px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s}
 .modal-check.done{background:var(--success);border-color:var(--success)}
 .modal-check.done::after{content:'';display:block;width:5px;height:10px;border:2px solid white;border-top:none;border-left:none;transform:rotate(45deg) translateY(-1px)}
-.modal-title{font-family:'Syne',sans-serif;font-weight:700;font-size:1.1rem;line-height:1.35;flex:1}
-.modal-close{background:var(--surface2);border:none;border-radius:8px;width:30px;height:30px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--muted);font-size:1rem;flex-shrink:0;transition:all .2s}
-.modal-close:hover{background:var(--border);color:var(--text)}
-
-/* MODAL WATCH BTN */
-.modal-watch-row{padding:14px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px}
-.modal-watch-btn{display:inline-flex;align-items:center;gap:8px;background:var(--grad);border:none;border-radius:10px;padding:10px 20px;color:white;font-family:'DM Sans',sans-serif;font-size:.9rem;font-weight:600;cursor:pointer;text-decoration:none;transition:opacity .2s}
+.modal-title{font-family:'Playfair Display',serif;font-weight:600;font-size:1.12rem;line-height:1.35;flex:1;color:var(--cream)}
+.modal-close{background:var(--surface2);border:none;border-radius:7px;width:30px;height:30px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--muted);font-size:.95rem;flex-shrink:0;transition:all .2s}
+.modal-close:hover{background:var(--border);color:var(--cream)}
+.modal-watch-row{padding:14px 22px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px}
+.modal-watch-btn{display:inline-flex;align-items:center;gap:8px;background:var(--grad);border:none;border-radius:10px;padding:10px 20px;color:white;font-family:'Raleway',sans-serif;font-size:.88rem;font-weight:700;cursor:pointer;text-decoration:none;transition:opacity .2s;letter-spacing:.02em}
 .modal-watch-btn:hover{opacity:.85}
-.modal-watch-hint{font-size:.8rem;color:var(--muted)}
-
-.modal-body{padding:20px;max-height:60vh;overflow-y:auto}
+.modal-watch-hint{font-size:.78rem;color:var(--muted)}
+.modal-body{padding:20px 22px 24px;max-height:60vh;overflow-y:auto}
 .modal-body::-webkit-scrollbar{width:4px}
 .modal-body::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
 
-/* MATERIALS LIST IN MODAL */
+.modal-checklist{margin-bottom:20px;background:var(--surface2);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.modal-checklist-header{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.modal-checklist-title{font-size:.75rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
+.modal-checklist-pct{font-size:.8rem;color:var(--gold);font-weight:600}
+.modal-checklist-bar{height:3px;background:var(--border)}
+.modal-checklist-fill{height:100%;background:var(--grad-warm);transition:width .4s}
+.modal-cl-item{display:flex;align-items:flex-start;gap:12px;padding:12px 16px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .15s}
+.modal-cl-item:last-child{border-bottom:none}
+.modal-cl-item:hover{background:rgba(255,255,255,.03)}
+.modal-cl-item.checked{opacity:.55}
+.modal-cl-dot{width:18px;height:18px;border-radius:5px;border:2px solid var(--border);flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.modal-cl-item.checked .modal-cl-dot{background:var(--success);border-color:var(--success)}
+.modal-cl-item.checked .modal-cl-dot::after{content:'';display:block;width:4px;height:8px;border:2px solid white;border-top:none;border-left:none;transform:rotate(45deg) translateY(-1px)}
+.modal-cl-text{font-size:.87rem;line-height:1.5;color:var(--muted);flex:1}
+.modal-cl-item.checked .modal-cl-text{text-decoration:line-through}
+
 .modal-materials{margin-bottom:20px}
-.modal-materials-title{font-size:.78rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px}
-.modal-material-item{display:flex;align-items:center;gap:10px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:10px 14px;margin-bottom:8px;text-decoration:none;color:var(--text);transition:all .2s}
-.modal-material-item:hover{border-color:var(--accent);background:rgba(168,85,247,.06)}
-.modal-material-icon{font-size:1.1rem;flex-shrink:0;width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center}
-.icon-bg-blue{background:rgba(6,182,212,.15)}
-.icon-bg-gold{background:rgba(245,158,11,.15)}
-.icon-bg-purple{background:rgba(168,85,247,.15)}
-.icon-bg-green{background:rgba(34,197,94,.15)}
-.icon-bg-pink{background:rgba(236,72,153,.15)}
-.modal-material-text{}
-.modal-material-label{font-size:.88rem;font-weight:500;display:block}
-.modal-material-type{font-size:.75rem;color:var(--muted)}
-.modal-material-arrow{margin-left:auto;color:var(--muted);font-size:.8rem}
+.modal-materials-title{font-size:.72rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px}
+.modal-material-item{display:flex;align-items:center;gap:10px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:10px 14px;margin-bottom:8px;text-decoration:none;color:var(--cream);transition:all .2s}
+.modal-material-item:hover{border-color:var(--gold);background:rgba(201,169,110,.06)}
+.modal-material-icon{font-size:1rem;flex-shrink:0;width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center}
+.icon-bg-blue{background:rgba(13,110,138,.2)}.icon-bg-gold{background:rgba(201,169,110,.15)}
+.icon-bg-purple{background:rgba(120,80,200,.2)}.icon-bg-green{background:rgba(76,175,130,.15)}.icon-bg-pink{background:rgba(200,80,120,.2)}
+.modal-material-text{flex:1}
+.modal-material-label{font-size:.86rem;font-weight:500;display:block;color:var(--cream)}
+.modal-material-type{font-size:.73rem;color:var(--muted)}
+.modal-material-arrow{margin-left:auto;color:var(--muted);font-size:.78rem}
 
-/* DIVIDER */
-.modal-divider{border:none;border-top:1px solid var(--border);margin:16px 0}
-
-/* MARKDOWN */
-.md-content{line-height:1.7;font-size:.91rem}
-.md-content h1,.md-content h2{font-family:'Syne',sans-serif;font-weight:700;margin:20px 0 8px;line-height:1.3;color:var(--text)}
-.md-content h1{font-size:1.1rem}.md-content h2{font-size:.98rem}
-.md-content h3,.md-content h4{font-weight:600;font-size:.9rem;margin:12px 0 5px;color:var(--text)}
+.md-content{line-height:1.75;font-size:.89rem}
+.md-content h1,.md-content h2{font-family:'Playfair Display',serif;font-weight:700;margin:20px 0 8px;line-height:1.3;color:var(--cream)}
+.md-content h1{font-size:1.1rem}.md-content h2{font-size:.97rem}
+.md-content h3,.md-content h4{font-weight:600;font-size:.88rem;margin:12px 0 5px;color:var(--cream)}
 .md-content p{margin-bottom:8px;color:var(--muted)}
-.md-content strong{color:var(--text);font-weight:600}
-.md-content em{color:var(--muted);font-style:italic}
+.md-content strong{color:var(--cream);font-weight:700}
+.md-content a{color:var(--gold);text-decoration:none;border-bottom:1px solid rgba(201,169,110,.3)}
+.md-content a:hover{border-color:var(--gold)}
 .md-content ul,.md-content ol{padding-left:18px;margin-bottom:8px}
 .md-content li{margin-bottom:3px;color:var(--muted)}
-.md-content a{color:var(--accent);text-decoration:none;border-bottom:1px solid rgba(168,85,247,.3)}
-.md-content a:hover{border-color:var(--accent)}
 .md-content hr{border:none;border-top:1px solid var(--border);margin:14px 0}
-.md-content code{background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:1px 6px;font-size:.84em;font-family:monospace}
-.no-content{text-align:center;padding:24px;color:var(--muted);font-size:.88rem}
+.md-content code{background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:1px 6px;font-size:.83em;font-family:monospace}
+.no-content{text-align:center;padding:28px;color:var(--muted);font-size:.86rem}
+.modal-divider{border:none;border-top:1px solid var(--border);margin:16px 0}
 
-/* FILES */
-.file-pill{display:inline-flex;align-items:center;gap:6px;background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.2);border-radius:8px;padding:7px 12px;color:var(--gold);text-decoration:none;font-size:.82rem;margin-right:7px;margin-bottom:7px;transition:all .2s}
-.file-pill:hover{background:rgba(245,158,11,.18)}
-
-/* RESPONSIVE */
-@media(max-width:600px){
-  .header-inner{gap:10px}.logo{font-size:.95rem}.search-box{max-width:150px}
-  .hero h1{font-size:1.6rem}.cards-grid{grid-template-columns:1fr}
-  .modal-body{max-height:65vh}
+@media(max-width:640px){
+  .header-inner{gap:10px}.logo{font-size:1rem}.search-box{max-width:150px}
+  .hero h1{font-size:1.8rem}.cards-grid{grid-template-columns:1fr}
+  .modal-body{max-height:65vh}.module-progress-side{display:none}
 }
 </style>
 </head>
 <body>
-
 <header class="header">
   <div class="header-inner">
-    <div class="logo">SMIA 🤖</div>
+    <div class="logo">SMIA <span>🤖</span></div>
     <div class="search-box">
       <span class="search-icon">🔍</span>
       <input type="text" id="searchInput" placeholder="Buscar aula..." />
@@ -199,34 +209,27 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 
 <main class="main">
   <div class="hero">
-    <div class="hero-tag">⚡️ Rayssa Academy</div>
-    <h1>Mentoria <span class="highlight">Social Media IA</span> 🤖🧠</h1>
+    <div class="hero-tag">✦ Rayssa Academy</div>
+    <h1>Mentoria <em>Social Media IA</em> 🤖🧠</h1>
     <p>Seu material de apoio completo. Acesse aulas, templates, exercícios e links importantes.</p>
     <div class="stats-row" id="statsRow">
       <div class="stat-pill"><span class="n">—</span> Módulos</div>
       <div class="stat-pill"><span class="n">—</span> Aulas</div>
     </div>
   </div>
-
   <div class="filter-row" id="filterRow" style="display:none">
     <span class="filter-label">Filtrar:</span>
     <button class="filter-btn active" data-filter="all">Tudo</button>
     <button class="filter-btn" data-filter="video">🎬 Com vídeo</button>
-    <button class="filter-btn" data-filter="content">📄 Com conteúdo</button>
-    <button class="filter-btn" data-filter="files">📎 Com arquivos</button>
+    <button class="filter-btn" data-filter="content">📄 Com material</button>
     <button class="filter-btn" data-filter="pending">⏳ Pendentes</button>
     <button class="filter-btn" data-filter="done">✅ Concluídos</button>
   </div>
-
   <div id="appContent">
-    <div class="loading-state">
-      <div class="spinner"></div>
-      <p>Carregando aulas...</p>
-    </div>
+    <div class="loading-state"><div class="spinner"></div><p>Carregando aulas...</p></div>
   </div>
 </main>
 
-<!-- MODAL -->
 <div class="modal-overlay" id="modalOverlay" onclick="handleOverlayClick(event)">
   <div class="modal">
     <div class="modal-header">
@@ -243,40 +246,67 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 </div>
 
 <script>
-// ===== CONFIG =====
 const MEMBERKIT_BASE = 'https://the-owner-academy.memberkit.com.br/275132-social-media-ia';
 
-// ===== STATE =====
+// Mapa de nomes e ordem dos módulos
+const MODULE_META = [
+  { keywords: ['comece','bem-vindo','boas-vindas','inicio','início'], label:'Módulo 0', name:'Bem-vindo (a)', order:0 },
+  { keywords: ['social media ia','o que é','oque é'], label:'Módulo 1', name:'O que é um Social Media IA?', order:1 },
+  { keywords: ['pix express','pix','express'], label:'Módulo 2', name:'PIX Express', order:2 },
+  { keywords: ['primeiro cliente','1º cliente'], label:'Módulo 3', name:'Seu Primeiro Cliente', order:3 },
+  { keywords: ['robôzinhos','robozinhos','funcionários','funcionarios'], label:'Módulo 4', name:'Robôzinhos Funcionários', order:4 },
+  { keywords: ['recorrentes','clientes recorrentes'], label:'Módulo 5', name:'Clientes Recorrentes', order:5 },
+  { keywords: ['contratação','contratacao','automática','automatica'], label:'Módulo 6', name:'Contratação Automática', order:6 },
+  { keywords: ['bônus','bonus','aceleradores'], label:'Bônus', name:'Bônus Aceleradores', order:7 },
+];
+
+const DEFAULT_CHECKLIST = [
+  'Assistir a aula completa',
+  'Anotar os pontos principais',
+  'Aplicar o exercício proposto',
+  'Revisar o material de apoio',
+];
+
 let COURSE_DATA = null;
 let completedCards = JSON.parse(localStorage.getItem('smia_completed') || '{}');
+let checklistState = JSON.parse(localStorage.getItem('smia_checklist') || '{}');
 let currentFilter = 'all';
 let currentSearch = '';
 let currentLesson = null;
 
-// ===== FETCH =====
 async function loadCourse() {
   try {
     const res = await fetch('/api/course');
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     COURSE_DATA = await res.json();
+    COURSE_DATA.sections = sortSections(COURSE_DATA.sections);
     renderApp();
   } catch (err) {
     document.getElementById('appContent').innerHTML = `
-      <div class="error-state">
-        <div class="error-box">
-          <h3>⚠️ Não foi possível carregar</h3>
-          <p>Verifique se as variáveis de ambiente estão configuradas na Vercel.</p>
-          <p style="margin-top:8px;font-size:.8rem;opacity:.6">${err.message}</p>
-          <button class="retry-btn" onclick="loadCourse()">Tentar novamente</button>
-        </div>
-      </div>`;
+      <div class="error-state"><div class="error-box">
+        <h3>⚠️ Não foi possível carregar</h3>
+        <p>Verifique as variáveis de ambiente na Vercel e tente novamente.</p>
+        <p style="margin-top:8px;font-size:.78rem;opacity:.5">${err.message}</p>
+        <button class="retry-btn" onclick="loadCourse()">Tentar novamente</button>
+      </div></div>`;
   }
 }
 
-// ===== HELPERS =====
+function getSectionMeta(name) {
+  const n = (name || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+  for (const m of MODULE_META) {
+    if (m.keywords.some(k => n.includes(k.normalize('NFD').replace(/[\u0300-\u036f]/g,'')))) return m;
+  }
+  const num = (name||'').match(/\d+/);
+  return { label: 'Módulo', name: name, order: num ? parseInt(num[0]) : 99 };
+}
+
+function sortSections(sections) {
+  return [...sections].sort((a,b) => getSectionMeta(a.name).order - getSectionMeta(b.name).order);
+}
+
 function getTotalLessons() {
-  if (!COURSE_DATA) return 0;
-  return COURSE_DATA.sections.reduce((s, sec) => s + sec.lessons.length, 0);
+  return COURSE_DATA ? COURSE_DATA.sections.reduce((s,sec) => s + sec.lessons.length, 0) : 0;
 }
 function getCompletedCount() {
   return Object.values(completedCards).filter(Boolean).length;
@@ -284,344 +314,281 @@ function getCompletedCount() {
 function getSectionProgress(section) {
   const total = section.lessons.length;
   if (!total) return 0;
-  const done = section.lessons.filter(l => completedCards[l.id]).length;
-  return Math.round((done / total) * 100);
+  return Math.round(section.lessons.filter(l => completedCards[l.id]).length / total * 100);
 }
 function lessonMatchesFilter(lesson) {
   if (currentSearch) {
     const q = currentSearch.toLowerCase();
     if (!lesson.title.toLowerCase().includes(q) && !(lesson.content||'').toLowerCase().includes(q)) return false;
   }
-  switch (currentFilter) {
-    case 'video': return !!lesson.video;
-    case 'content': return !!(lesson.content && lesson.content.trim());
-    case 'files': return !!(lesson.files && lesson.files.length);
-    case 'pending': return !completedCards[lesson.id];
-    case 'done': return !!completedCards[lesson.id];
-    default: return true;
-  }
+  if (currentFilter === 'video') return !!lesson.video;
+  if (currentFilter === 'content') return !!(lesson.content && lesson.content.trim());
+  if (currentFilter === 'pending') return !completedCards[lesson.id];
+  if (currentFilter === 'done') return !!completedCards[lesson.id];
+  return true;
 }
 
-// ===== MEMBERKIT URL =====
 function getMemberkitUrl(lesson) {
-  const slug = lesson.slug || lesson.title.toLowerCase()
-    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
-    .replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+  const slug = lesson.slug || lesson.title.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
   return `${MEMBERKIT_BASE}/${lesson.id}-${slug}`;
 }
 
-// ===== EXTRACT LINKS FROM HTML CONTENT =====
 function extractLinks(html) {
   if (!html) return [];
   const links = [];
-  const parser = new DOMParser();
-  const doc = parser.parseFromString(html, 'text/html');
-  doc.querySelectorAll('a[href]').forEach(a => {
-    const href = a.getAttribute('href');
-    const text = a.textContent.trim();
-    if (href && href.startsWith('http') && text) {
-      links.push({ href, text });
-    }
-  });
+  try {
+    const doc = new DOMParser().parseFromString(html, 'text/html');
+    doc.querySelectorAll('a[href]').forEach(a => {
+      const href = a.getAttribute('href');
+      const text = a.textContent.trim();
+      if (href && href.startsWith('http') && text && !text.startsWith('http') && text.length > 2) {
+        links.push({ href, text: text.length > 55 ? text.substring(0,52)+'...' : text });
+      }
+    });
+  } catch(e) {}
   return links;
 }
 
-// ===== LINK TYPE DETECTION =====
-function getLinkMeta(href, text) {
-  if (href.includes('canva.com')) return { icon: '🎨', type: 'Template Canva', bg: 'icon-bg-purple' };
-  if (href.includes('docs.google.com/document')) return { icon: '📄', type: 'Google Docs', bg: 'icon-bg-blue' };
-  if (href.includes('docs.google.com/spreadsheets')) return { icon: '📊', type: 'Planilha Google', bg: 'icon-bg-green' };
-  if (href.includes('drive.google.com')) return { icon: '📁', type: 'Google Drive', bg: 'icon-bg-gold' };
-  if (href.includes('youtube.com') || href.includes('youtu.be')) return { icon: '▶️', type: 'YouTube', bg: 'icon-bg-pink' };
-  if (href.includes('t.me') || href.includes('telegram')) return { icon: '✈️', type: 'Telegram', bg: 'icon-bg-blue' };
-  if (href.includes('trello.com')) return { icon: '📋', type: 'Trello', bg: 'icon-bg-blue' };
-  if (href.includes('autentique')) return { icon: '✍️', type: 'Contrato', bg: 'icon-bg-gold' };
-  if (href.includes('lovable.dev')) return { icon: '💜', type: 'Lovable', bg: 'icon-bg-purple' };
-  if (href.includes('chatgpt.com') || href.includes('openai.com')) return { icon: '🤖', type: 'ChatGPT', bg: 'icon-bg-green' };
-  if (href.includes('getninjas')) return { icon: '💼', type: 'GetNinjas', bg: 'icon-bg-gold' };
-  if (href.includes('facebook.com') || href.includes('meta.com')) return { icon: '📘', type: 'Meta', bg: 'icon-bg-blue' };
-  if (href.includes('apps.apple.com') || href.includes('play.google.com')) return { icon: '📱', type: 'App', bg: 'icon-bg-purple' };
-  return { icon: '🔗', type: 'Link', bg: 'icon-bg-blue' };
+function getLinkMeta(href) {
+  if (href.includes('canva.com')) return {icon:'🎨',type:'Template Canva',bg:'icon-bg-purple'};
+  if (href.includes('docs.google.com/document')) return {icon:'📄',type:'Google Docs',bg:'icon-bg-blue'};
+  if (href.includes('docs.google.com/spreadsheets')) return {icon:'📊',type:'Planilha Google',bg:'icon-bg-green'};
+  if (href.includes('drive.google.com')) return {icon:'📁',type:'Google Drive',bg:'icon-bg-gold'};
+  if (href.includes('youtube.com')||href.includes('youtu.be')) return {icon:'▶️',type:'YouTube',bg:'icon-bg-pink'};
+  if (href.includes('t.me')||href.includes('telegram')) return {icon:'✈️',type:'Telegram',bg:'icon-bg-blue'};
+  if (href.includes('trello.com')) return {icon:'📋',type:'Trello',bg:'icon-bg-blue'};
+  if (href.includes('autentique')) return {icon:'✍️',type:'Contrato',bg:'icon-bg-gold'};
+  if (href.includes('lovable.dev')) return {icon:'💜',type:'Lovable',bg:'icon-bg-purple'};
+  if (href.includes('chatgpt.com')||href.includes('openai.com')) return {icon:'🤖',type:'ChatGPT',bg:'icon-bg-green'};
+  if (href.includes('getninjas')) return {icon:'💼',type:'GetNinjas',bg:'icon-bg-gold'};
+  if (href.includes('facebook.com')||href.includes('meta.com')) return {icon:'📘',type:'Meta',bg:'icon-bg-blue'};
+  if (href.includes('apps.apple.com')||href.includes('play.google.com')) return {icon:'📱',type:'App',bg:'icon-bg-purple'};
+  return {icon:'🔗',type:'Link',bg:'icon-bg-blue'};
 }
 
-function cleanLinkText(text) {
-  // Remove URLs expostas como texto
-  if (text.startsWith('http') || text.startsWith('www')) return null;
-  if (text.length > 60) return text.substring(0, 57) + '...';
-  return text;
-}
-
-// ===== STRIP HTML =====
 function stripHtml(html) {
-  const doc = new DOMParser().parseFromString(html, 'text/html');
-  return doc.body.textContent || '';
+  try { return new DOMParser().parseFromString(html,'text/html').body.textContent || ''; } catch(e) { return ''; }
 }
 
-// ===== MARKDOWN PARSER =====
+function getClState(lessonId) {
+  if (!checklistState[lessonId]) checklistState[lessonId] = {};
+  return checklistState[lessonId];
+}
+function getClProgress(lessonId) {
+  const s = getClState(lessonId);
+  const done = DEFAULT_CHECKLIST.filter((_,i) => s[i]).length;
+  return { done, total: DEFAULT_CHECKLIST.length, pct: Math.round(done/DEFAULT_CHECKLIST.length*100) };
+}
+function toggleClItem(lessonId, idx) {
+  if (!checklistState[lessonId]) checklistState[lessonId] = {};
+  checklistState[lessonId][idx] = !checklistState[lessonId][idx];
+  localStorage.setItem('smia_checklist', JSON.stringify(checklistState));
+}
+
 function parseMarkdown(text) {
   if (!text) return '';
-  // If it looks like HTML, return it cleaned (strip script/style but keep structure)
-  if (text.trim().startsWith('<')) {
-    const clean = text
-      .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '')
-      .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '');
-    return clean;
-  }
+  if (text.trim().startsWith('<')) return text.replace(/<script[^>]*>[\s\S]*?<\/script>/gi,'').replace(/<style[^>]*>[\s\S]*?<\/style>/gi,'');
   return text
     .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
-    .replace(/^#### (.+)$/gm,'<h4>$1</h4>')
-    .replace(/^### (.+)$/gm,'<h3>$1</h3>')
-    .replace(/^## (.+)$/gm,'<h2>$1</h2>')
-    .replace(/^# (.+)$/gm,'<h1>$1</h1>')
-    .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
-    .replace(/\*(.+?)\*/g,'<em>$1</em>')
-    .replace(/_(.+?)_/g,'<em>$1</em>')
+    .replace(/^#### (.+)$/gm,'<h4>$1</h4>').replace(/^### (.+)$/gm,'<h3>$1</h3>')
+    .replace(/^## (.+)$/gm,'<h2>$1</h2>').replace(/^# (.+)$/gm,'<h1>$1</h1>')
+    .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>').replace(/\*(.+?)\*/g,'<em>$1</em>')
     .replace(/\[([^\]]+)\]\(([^)]+)\)/g,'<a href="$2" target="_blank" rel="noopener">$1</a>')
-    .replace(/^---$/gm,'<hr>')
-    .replace(/^- (.+)$/gm,'<li>$1</li>')
+    .replace(/^---$/gm,'<hr>').replace(/^- (.+)$/gm,'<li>$1</li>')
     .replace(/(<li>[\s\S]*?<\/li>\n?)+/g,m=>'<ul>'+m+'</ul>')
     .replace(/^\d+\. (.+)$/gm,'<li>$1</li>')
-    .replace(/^(?!<[hul\/]|<hr|<li)(.+)$/gm,'<p>$1</p>')
-    .replace(/<p><\/p>/g,'')
+    .replace(/^(?!<[hul\/]|<hr|<li)(.+)$/gm,'<p>$1</p>').replace(/<p><\/p>/g,'')
     .replace(/`(.+?)`/g,'<code>$1</code>');
 }
 
-// ===== RENDER CARD MATERIALS =====
-function renderCardMaterials(lesson) {
-  const links = extractLinks(lesson.content || '');
-  const hasFiles = lesson.files && lesson.files.length;
-  if (!links.length && !hasFiles) return '';
-
-  const items = [];
-
-  links.slice(0, 3).forEach(link => {
-    const text = cleanLinkText(link.text);
-    if (!text) return;
-    const meta = getLinkMeta(link.href, text);
-    items.push(`<a class="material-item" href="${link.href}" target="_blank" rel="noopener" onclick="event.stopPropagation()">
-      <span class="material-icon">${meta.icon}</span>
-      <span class="material-label">${text}</span>
-      <span class="material-arrow">↗</span>
-    </a>`);
-  });
-
-  if (hasFiles) {
-    lesson.files.slice(0, 2).forEach(f => {
-      items.push(`<a class="material-item" href="${f.url}" target="_blank" rel="noopener" onclick="event.stopPropagation()">
-        <span class="material-icon">📎</span>
-        <span class="material-label">${f.filename || 'Arquivo'}</span>
-        <span class="material-arrow">↓</span>
-      </a>`);
-    });
-  }
-
-  if (!items.length) return '';
-  return `<div class="card-materials">${items.join('')}</div>`;
-}
-
-// ===== RENDER =====
 function renderApp() {
   const total = getTotalLessons();
   const done = getCompletedCount();
-  const pct = total ? Math.round((done / total) * 100) : 0;
-
+  const pct = total ? Math.round(done/total*100) : 0;
   document.getElementById('globalPct').textContent = pct + '%';
   document.getElementById('statsRow').innerHTML = `
     <div class="stat-pill"><span class="n">${COURSE_DATA.sections.length}</span> Módulos</div>
     <div class="stat-pill"><span class="n">${total}</span> Aulas</div>
     <div class="stat-pill"><span class="n">${done}</span> Concluídas</div>
-    <div class="stat-pill"><span class="n">${total - done}</span> Pendentes</div>
-  `;
-
+    <div class="stat-pill"><span class="n">${total-done}</span> Pendentes</div>`;
   document.getElementById('filterRow').style.display = 'flex';
 
-  let html = '';
-  let anyVisible = false;
+  let html = ''; let anyVisible = false;
 
   COURSE_DATA.sections.forEach((section, si) => {
     const filtered = section.lessons.filter(lessonMatchesFilter);
     if (!filtered.length) return;
     anyVisible = true;
     const prog = getSectionProgress(section);
+    const meta = getSectionMeta(section.name);
 
     const cardsHtml = filtered.map(lesson => {
       const isDone = !!completedCards[lesson.id];
-      const mkUrl = getMemberkitUrl(lesson);
-      const materials = renderCardMaterials(lesson);
+      const {pct:clPct} = getClProgress(lesson.id);
+      const clState = getClState(lesson.id);
+      const clItems = DEFAULT_CHECKLIST.map((item,i) =>
+        `<div class="card-cl-item ${clState[i]?'checked':''}" onclick="event.stopPropagation();cardCl(${lesson.id},${i},this)">
+          <div class="cl-dot"></div><span>${item}</span></div>`).join('');
+      const links = extractLinks(lesson.content||'');
+      const matItems = links.slice(0,3).map(l => {
+        const m = getLinkMeta(l.href);
+        return `<a class="material-item" href="${l.href}" target="_blank" rel="noopener" onclick="event.stopPropagation()">
+          <span class="material-icon">${m.icon}</span><span class="material-label">${l.text}</span><span class="material-arrow">↗</span></a>`;
+      }).join('');
+      const filesItems = (lesson.files||[]).slice(0,2).map(f =>
+        `<a class="material-item" href="${f.url}" target="_blank" rel="noopener" onclick="event.stopPropagation()">
+          <span class="material-icon">📎</span><span class="material-label">${f.filename||'Arquivo'}</span><span class="material-arrow">↓</span></a>`).join('');
+      const materials = (matItems||filesItems) ? `<div class="card-materials">${matItems}${filesItems}</div>` : '';
 
-      return `<div class="card ${isDone ? 'completed' : ''}">
+      return `<div class="card ${isDone?'completed':''}" data-lid="${lesson.id}">
         <div class="card-top" onclick="openLesson(${lesson.id})" style="cursor:pointer">
           <div class="card-check" onclick="event.stopPropagation();toggleDone(${lesson.id})"></div>
           <div class="card-name">${lesson.title}</div>
         </div>
+        <div class="card-checklist">
+          <div class="card-checklist-bar"><div class="card-checklist-fill" style="width:${clPct}%"></div></div>
+          <div class="card-checklist-items">${clItems}</div>
+        </div>
         ${materials}
         <div class="card-footer">
-          <a class="watch-btn" href="${mkUrl}" target="_blank" rel="noopener">▶ Assistir</a>
+          <a class="watch-btn" href="${getMemberkitUrl(lesson)}" target="_blank" rel="noopener">▶ Assistir</a>
           <button class="open-btn" onclick="openLesson(${lesson.id})">Ver material →</button>
         </div>
       </div>`;
     }).join('');
 
-    html += `
-      <div class="module-section" style="animation-delay:${si * 0.05}s">
-        <div class="module-header" onclick="toggleModule(this)">
-          <div class="module-title-wrap">
-            <div class="module-num mod-${si % 10}">${si}</div>
-            <div class="module-title">${section.name}</div>
-            <span class="mod-count">${filtered.length} aulas</span>
-          </div>
-          <div style="display:flex;align-items:center;gap:8px">
-            <div class="module-progress-wrap">
-              <div class="module-progress-bar"><div class="module-progress-fill" style="width:${prog}%"></div></div>
-              <span class="module-progress-pct">${prog}%</span>
-            </div>
-            <span class="chevron">▾</span>
-          </div>
+    html += `<div class="module-section" style="animation-delay:${si*.05}s">
+      <div class="module-header" onclick="toggleModule(this)">
+        <div class="module-num-badge mod-color-${si%8}">
+          <span class="module-num-label">${meta.label}</span>
+          <span class="module-num-val">${meta.order}</span>
         </div>
-        <div class="cards-grid">${cardsHtml}</div>
-      </div>`;
+        <div class="module-info">
+          <div class="module-name-subtitle">${meta.label}</div>
+          <div class="module-name">${meta.name}</div>
+          <div class="module-meta-row"><span class="mod-count">${filtered.length} aulas</span></div>
+        </div>
+        <div class="module-progress-side">
+          <div class="module-progress-bar"><div class="module-progress-fill" style="width:${prog}%"></div></div>
+          <span class="module-progress-pct">${prog}%</span>
+          <span class="chevron">▾</span>
+        </div>
+      </div>
+      <div class="cards-grid">${cardsHtml}</div>
+    </div>`;
   });
 
-  if (!anyVisible) {
-    html = `<div style="text-align:center;padding:60px 20px;color:var(--muted)">
-      <div style="font-size:3rem;margin-bottom:12px">🔍</div><p>Nenhuma aula encontrada</p></div>`;
-  }
-
+  if (!anyVisible) html = `<div style="text-align:center;padding:60px 20px;color:var(--muted)"><div style="font-size:3rem;margin-bottom:12px">🔍</div><p>Nenhuma aula encontrada</p></div>`;
   document.getElementById('appContent').innerHTML = html;
 }
 
-// ===== TOGGLE MODULE =====
-function toggleModule(header) {
-  header.parentElement.classList.toggle('collapsed');
-}
+function toggleModule(h) { h.parentElement.classList.toggle('collapsed'); }
 
-// ===== TOGGLE DONE =====
-function toggleDone(lessonId) {
-  completedCards[lessonId] = !completedCards[lessonId];
-  if (!completedCards[lessonId]) delete completedCards[lessonId];
+function toggleDone(id) {
+  completedCards[id] = !completedCards[id];
+  if (!completedCards[id]) delete completedCards[id];
   localStorage.setItem('smia_completed', JSON.stringify(completedCards));
   renderApp();
 }
 
-// ===== OPEN LESSON =====
+function cardCl(lessonId, idx, el) {
+  toggleClItem(lessonId, idx);
+  el.classList.toggle('checked');
+  const {pct} = getClProgress(lessonId);
+  const card = el.closest('.card');
+  if (card) { const f = card.querySelector('.card-checklist-fill'); if(f) f.style.width=pct+'%'; }
+}
+
 function openLesson(lessonId) {
   if (!COURSE_DATA) return;
-  const lesson = COURSE_DATA.sections.flatMap(s => s.lessons).find(l => l.id === lessonId);
+  const lesson = COURSE_DATA.sections.flatMap(s=>s.lessons).find(l=>l.id===lessonId);
   if (!lesson) return;
   currentLesson = lesson;
 
-  const isDone = !!completedCards[lesson.id];
   document.getElementById('modalTitle').textContent = lesson.title;
-  document.getElementById('modalCheck').className = 'modal-check' + (isDone ? ' done' : '');
+  document.getElementById('modalCheck').className = 'modal-check' + (completedCards[lesson.id]?' done':'');
+  document.getElementById('modalWatchRow').style.display = 'flex';
+  document.getElementById('modalWatchBtn').href = getMemberkitUrl(lesson);
 
-  // Watch button
-  const watchRow = document.getElementById('modalWatchRow');
-  const watchBtn = document.getElementById('modalWatchBtn');
-  watchRow.style.display = 'flex';
-  watchBtn.href = getMemberkitUrl(lesson);
+  const clState = getClState(lessonId);
+  const {done:clDone,total:clTotal,pct:clPct} = getClProgress(lessonId);
+  const clItems = DEFAULT_CHECKLIST.map((item,i) =>
+    `<div class="modal-cl-item ${clState[i]?'checked':''}" onclick="modalCl(${lessonId},${i},this)">
+      <div class="modal-cl-dot"></div><span class="modal-cl-text">${item}</span></div>`).join('');
 
-  // Body
-  let body = '';
-  const links = extractLinks(lesson.content || '');
+  const links = extractLinks(lesson.content||'');
+  const matItems = [...links.map(l => {
+    const m = getLinkMeta(l.href);
+    return `<a class="modal-material-item" href="${l.href}" target="_blank" rel="noopener">
+      <div class="modal-material-icon ${m.bg}">${m.icon}</div>
+      <div class="modal-material-text"><span class="modal-material-label">${l.text}</span><span class="modal-material-type">${m.type}</span></div>
+      <span class="modal-material-arrow">↗</span></a>`;
+  }), ...(lesson.files||[]).map(f =>
+    `<a class="modal-material-item" href="${f.url}" target="_blank" rel="noopener">
+      <div class="modal-material-icon icon-bg-gold">📎</div>
+      <div class="modal-material-text"><span class="modal-material-label">${f.filename||'Arquivo'}</span><span class="modal-material-type">Arquivo anexo</span></div>
+      <span class="modal-material-arrow">↓</span></a>`)];
 
-  // Materials section
-  if (links.length || (lesson.files && lesson.files.length)) {
-    const materialItems = [];
-
-    links.forEach(link => {
-      const text = cleanLinkText(link.text);
-      if (!text) return;
-      const meta = getLinkMeta(link.href, text);
-      materialItems.push(`
-        <a class="modal-material-item" href="${link.href}" target="_blank" rel="noopener">
-          <div class="modal-material-icon ${meta.bg}">${meta.icon}</div>
-          <div class="modal-material-text">
-            <span class="modal-material-label">${text}</span>
-            <span class="modal-material-type">${meta.type}</span>
-          </div>
-          <span class="modal-material-arrow">↗</span>
-        </a>`);
-    });
-
-    if (lesson.files && lesson.files.length) {
-      lesson.files.forEach(f => {
-        materialItems.push(`
-          <a class="modal-material-item" href="${f.url}" target="_blank" rel="noopener">
-            <div class="modal-material-icon icon-bg-gold">📎</div>
-            <div class="modal-material-text">
-              <span class="modal-material-label">${f.filename || 'Arquivo'}</span>
-              <span class="modal-material-type">Arquivo anexo</span>
-            </div>
-            <span class="modal-material-arrow">↓</span>
-          </a>`);
-      });
-    }
-
-    if (materialItems.length) {
-      body += `<div class="modal-materials">
-        <div class="modal-materials-title">📚 Materiais desta aula</div>
-        ${materialItems.join('')}
-      </div>`;
-    }
-  }
-
-  // Text content (strip links already shown above, show remaining text)
+  const materialsHtml = matItems.length ? `<div class="modal-materials"><div class="modal-materials-title">📚 Materiais desta aula</div>${matItems.join('')}</div>` : '';
   const textContent = lesson.content ? stripHtml(lesson.content).trim() : '';
-  if (textContent && textContent.length > 30) {
-    if (body) body += '<hr class="modal-divider">';
-    body += `<div class="md-content">${parseMarkdown(lesson.content)}</div>`;
-  }
+  const contentHtml = textContent.length > 30 ? `<hr class="modal-divider"><div class="md-content">${parseMarkdown(lesson.content)}</div>` : '';
 
-  if (!body) {
-    body = `<div class="no-content">
-      <div style="font-size:2rem;margin-bottom:8px">🎬</div>
-      <p>Clique em "Assistir aula" para acessar o conteúdo na plataforma.</p>
-    </div>`;
-  }
+  document.getElementById('modalBody').innerHTML = `
+    <div class="modal-checklist">
+      <div class="modal-checklist-header">
+        <span class="modal-checklist-title">✅ Progresso da aula</span>
+        <span class="modal-checklist-pct" id="mClPct">${clDone}/${clTotal}</span>
+      </div>
+      <div class="modal-checklist-bar"><div class="modal-checklist-fill" id="mClFill" style="width:${clPct}%"></div></div>
+      ${clItems}
+    </div>
+    ${materialsHtml}
+    ${contentHtml || (!materialsHtml ? '<div class="no-content"><div style="font-size:2rem;margin-bottom:8px">🎬</div><p>Clique em "Assistir aula" para acessar o conteúdo na plataforma.</p></div>' : '')}`;
 
-  document.getElementById('modalBody').innerHTML = body;
   document.getElementById('modalOverlay').classList.add('open');
   document.body.style.overflow = 'hidden';
 }
 
-// ===== TOGGLE MODAL DONE =====
+function modalCl(lessonId, idx, el) {
+  toggleClItem(lessonId, idx);
+  el.classList.toggle('checked');
+  const {pct,done,total} = getClProgress(lessonId);
+  const fill = document.getElementById('mClFill');
+  const pctEl = document.getElementById('mClPct');
+  if (fill) fill.style.width = pct+'%';
+  if (pctEl) pctEl.textContent = `${done}/${total}`;
+  const card = document.querySelector(`[data-lid="${lessonId}"]`);
+  if (card) {
+    const f = card.querySelector('.card-checklist-fill'); if(f) f.style.width=pct+'%';
+    const items = card.querySelectorAll('.card-cl-item');
+    if (items[idx]) items[idx].classList.toggle('checked', !!getClState(lessonId)[idx]);
+  }
+}
+
 function toggleModalDone() {
   if (!currentLesson) return;
   toggleDone(currentLesson.id);
-  const isDone = !!completedCards[currentLesson.id];
-  document.getElementById('modalCheck').className = 'modal-check' + (isDone ? ' done' : '');
+  document.getElementById('modalCheck').className = 'modal-check' + (completedCards[currentLesson.id]?' done':'');
 }
 
-// ===== CLOSE MODAL =====
 function closeModal() {
   document.getElementById('modalOverlay').classList.remove('open');
   document.body.style.overflow = '';
   currentLesson = null;
 }
-function handleOverlayClick(e) {
-  if (e.target === document.getElementById('modalOverlay')) closeModal();
-}
+function handleOverlayClick(e) { if(e.target===document.getElementById('modalOverlay')) closeModal(); }
 
-// ===== FILTERS =====
 document.getElementById('filterRow').addEventListener('click', e => {
   if (e.target.classList.contains('filter-btn')) {
-    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
     e.target.classList.add('active');
     currentFilter = e.target.dataset.filter;
     renderApp();
   }
 });
+document.getElementById('searchInput').addEventListener('input', e => { currentSearch=e.target.value.trim(); renderApp(); });
+document.addEventListener('keydown', e => { if(e.key==='Escape') closeModal(); });
 
-// ===== SEARCH =====
-document.getElementById('searchInput').addEventListener('input', e => {
-  currentSearch = e.target.value.trim();
-  renderApp();
-});
-
-// ===== KEYBOARD =====
-document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
-
-// ===== INIT =====
 loadCourse();
 </script>
 </body>
