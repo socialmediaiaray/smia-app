@@ -202,6 +202,62 @@ body{font-family:'Raleway',sans-serif;background:var(--bg);color:var(--text);min
   .hero h1{font-size:1.8rem}.cards-grid{grid-template-columns:1fr}
   .modal-body{max-height:65vh}.module-progress-side{display:none}
 }
+
+/* USER BADGE */
+.user-badge {
+  display:flex;align-items:center;gap:6px;
+  background:var(--surface2);border:1px solid var(--border);
+  border-radius:8px;padding:6px 12px;font-size:.75rem;
+  color:var(--muted);cursor:pointer;max-width:160px;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  transition:border-color .2s;
+}
+.user-badge:hover{border-color:var(--gold);color:var(--gold)}
+.user-badge::before{content:'👤';font-size:.8rem}
+
+/* EMAIL MODAL */
+.email-modal-overlay {
+  position:fixed;inset:0;background:rgba(7,30,42,.97);
+  z-index:2000;display:flex;align-items:center;justify-content:center;
+  padding:24px;opacity:0;pointer-events:none;transition:opacity .3s;
+}
+.email-modal-overlay.open{opacity:1;pointer-events:all}
+.email-modal {
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:20px;padding:40px 36px;width:100%;max-width:420px;
+  text-align:center;
+  animation:slideUp .35s ease;
+}
+@keyframes slideUp{from{transform:translateY(24px);opacity:0}to{transform:translateY(0);opacity:1}}
+.em-logo {
+  font-family:'Playfair Display',serif;font-weight:700;font-style:italic;
+  font-size:1.4rem;color:var(--cream);margin-bottom:20px;
+}
+.em-logo span{color:var(--gold);font-style:normal}
+.em-title {
+  font-family:'Playfair Display',serif;font-weight:700;
+  font-size:1.5rem;line-height:1.25;color:var(--cream);margin-bottom:12px;
+}
+.em-title em{font-style:italic;color:var(--gold)}
+.em-subtitle{font-size:.88rem;color:var(--muted);line-height:1.6;margin-bottom:24px}
+.em-input-wrap{margin-bottom:14px}
+.em-input-wrap input {
+  width:100%;background:var(--surface2);border:1px solid var(--border);
+  border-radius:10px;padding:12px 16px;color:var(--text);
+  font-family:'Raleway',sans-serif;font-size:.95rem;outline:none;
+  transition:border-color .2s;text-align:center;
+}
+.em-input-wrap input:focus{border-color:var(--gold)}
+.em-input-wrap input::placeholder{color:var(--muted)}
+.em-btn {
+  width:100%;background:var(--grad);border:none;border-radius:10px;
+  padding:12px 20px;color:white;font-family:'Raleway',sans-serif;
+  font-size:.95rem;font-weight:700;cursor:pointer;transition:opacity .2s;
+  letter-spacing:.02em;margin-bottom:14px;
+}
+.em-btn:hover{opacity:.85}
+.em-btn:disabled{opacity:.5;cursor:not-allowed}
+.em-hint{font-size:.75rem;color:var(--muted)}
 </style>
 </head>
 <body>
@@ -212,13 +268,31 @@ body{font-family:'Raleway',sans-serif;background:var(--bg);color:var(--text);min
       <span class="search-icon">🔍</span>
       <input type="text" id="searchInput" placeholder="Buscar aula..." />
     </div>
-    <div class="progress-badge">
-      <span>🎯</span>
-      <span class="prog-num" id="globalPct">0%</span>
-      <span style="color:var(--muted)">concluído</span>
+    <div style="display:flex;align-items:center;gap:10px;flex-shrink:0">
+      <div class="user-badge" id="userEmailBadge" style="display:none" onclick="showEmailModal()"></div>
+      <div class="progress-badge">
+        <span>🎯</span>
+        <span class="prog-num" id="globalPct">0%</span>
+        <span style="color:var(--muted)">concluído</span>
+      </div>
     </div>
   </div>
 </header>
+
+<!-- EMAIL MODAL -->
+<div class="email-modal-overlay" id="emailModal">
+  <div class="email-modal">
+    <div class="em-logo">SMIA <span>🤖</span></div>
+    <h2 class="em-title">Bem-vinda à<br><em>Mentoria Social Media IA</em></h2>
+    <p class="em-subtitle">Digite seu email de compra para carregar seu progresso em qualquer dispositivo.</p>
+    <div class="em-input-wrap">
+      <input type="email" id="emailInput" placeholder="seu@email.com"
+        onkeydown="if(event.key==='Enter') submitEmail()" />
+    </div>
+    <button class="em-btn" id="emailSubmitBtn" onclick="submitEmail()">Entrar →</button>
+    <p class="em-hint">Seu progresso fica salvo na nuvem 🌥️</p>
+  </div>
+</div>
 
 <main class="main">
   <div class="hero">
@@ -340,18 +414,102 @@ const DEFAULT_CHECKLIST = [
 ];
 
 let COURSE_DATA = null;
-let completedCards = JSON.parse(localStorage.getItem('smia_completed') || '{}');
-let checklistState = JSON.parse(localStorage.getItem('smia_checklist') || '{}');
+let completedCards = {};
+let checklistState = {};
 let currentFilter = 'all';
 let currentSearch = '';
 let currentLesson = null;
+let currentEmail = localStorage.getItem('smia_email') || '';
+let saveTimeout = null;
+
+// ===== EMAIL LOGIN =====
+function showEmailModal() {
+  document.getElementById('emailModal').classList.add('open');
+}
+function closeEmailModal() {
+  if (!currentEmail) return; // Obriga login
+  document.getElementById('emailModal').classList.remove('open');
+}
+async function submitEmail() {
+  const input = document.getElementById('emailInput');
+  const email = input.value.trim().toLowerCase();
+  if (!email || !email.includes('@')) {
+    input.style.borderColor = '#e05c5c';
+    return;
+  }
+  input.style.borderColor = '';
+  const btn = document.getElementById('emailSubmitBtn');
+  btn.textContent = 'Carregando...';
+  btn.disabled = true;
+
+  currentEmail = email;
+  localStorage.setItem('smia_email', email);
+  await loadProgress();
+  document.getElementById('emailModal').classList.remove('open');
+  document.getElementById('userEmailBadge').textContent = email;
+  document.getElementById('userEmailBadge').style.display = 'flex';
+  btn.textContent = 'Entrar';
+  btn.disabled = false;
+}
+
+// ===== PROGRESS SYNC =====
+async function loadProgress() {
+  if (!currentEmail) return;
+  try {
+    const res = await fetch(`/api/progress?email=${encodeURIComponent(currentEmail)}`);
+    if (!res.ok) return;
+    const data = await res.json();
+    completedCards = data.completed || {};
+    checklistState = data.checklist || {};
+    // Fallback to localStorage if cloud is empty
+    if (!Object.keys(completedCards).length) {
+      completedCards = JSON.parse(localStorage.getItem('smia_completed') || '{}');
+    }
+    if (!Object.keys(checklistState).length) {
+      checklistState = JSON.parse(localStorage.getItem('smia_checklist') || '{}');
+    }
+    if (COURSE_DATA) renderApp();
+  } catch (e) {
+    // Fallback to localStorage silently
+    completedCards = JSON.parse(localStorage.getItem('smia_completed') || '{}');
+    checklistState = JSON.parse(localStorage.getItem('smia_checklist') || '{}');
+  }
+}
+
+function scheduleSave() {
+  // Save locally immediately
+  localStorage.setItem('smia_completed', JSON.stringify(completedCards));
+  localStorage.setItem('smia_checklist', JSON.stringify(checklistState));
+  // Debounce cloud save — wait 1.5s after last change
+  clearTimeout(saveTimeout);
+  if (!currentEmail) return;
+  saveTimeout = setTimeout(async () => {
+    try {
+      await fetch('/api/progress', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: currentEmail, completed: completedCards, checklist: checklistState })
+      });
+    } catch (e) {}
+  }, 1500);
+}
 
 async function loadCourse() {
+  // Show email modal if no email
+  if (!currentEmail) {
+    showEmailModal();
+  }
   try {
     const res = await fetch('/api/course');
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     COURSE_DATA = await res.json();
     COURSE_DATA.sections = sortSections(COURSE_DATA.sections);
+    // Load progress if email already known
+    if (currentEmail) {
+      document.getElementById('userEmailBadge').textContent = currentEmail;
+      document.getElementById('userEmailBadge').style.display = 'flex';
+      await loadProgress();
+    }
     renderApp();
   } catch (err) {
     document.getElementById('appContent').innerHTML = `
@@ -458,7 +616,7 @@ function getClProgress(lessonId) {
 function toggleClItem(lessonId, idx) {
   if (!checklistState[lessonId]) checklistState[lessonId] = {};
   checklistState[lessonId][idx] = !checklistState[lessonId][idx];
-  localStorage.setItem('smia_checklist', JSON.stringify(checklistState));
+  scheduleSave();
 }
 
 function parseMarkdown(text) {
@@ -563,7 +721,7 @@ function toggleModule(h) { h.parentElement.classList.toggle('collapsed'); }
 function toggleDone(id) {
   completedCards[id] = !completedCards[id];
   if (!completedCards[id]) delete completedCards[id];
-  localStorage.setItem('smia_completed', JSON.stringify(completedCards));
+  scheduleSave();
   renderApp();
 }
 
