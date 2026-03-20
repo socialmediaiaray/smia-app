@@ -2,10 +2,16 @@
   "version": 2,
   "builds": [
     { "src": "index.html", "use": "@vercel/static" },
-    { "src": "api/course.js", "use": "@vercel/node" }
+    { "src": "faq.html", "use": "@vercel/static" },
+    { "src": "api/course.js", "use": "@vercel/node" },
+    { "src": "api/progress.js", "use": "@vercel/node" },
+    { "src": "api/faq.js", "use": "@vercel/node" }
   ],
   "routes": [
     { "src": "/api/course", "dest": "/api/course.js" },
+    { "src": "/api/progress", "dest": "/api/progress.js" },
+    { "src": "/api/faq", "dest": "/api/faq.js" },
+    { "src": "/faq", "dest": "/faq.html" },
     { "src": "/(.*)", "dest": "/index.html" }
   ]
 }
