@@ -1,79 +1,921 @@
-// api/course.js — Proxy seguro para a API do MemberKit
-// Busca aulas em lotes para evitar rate limit (429)
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mentoria Social Media IA 🤖🧠</title>
+<link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#071e2a; --surface:#0d2d3e; --surface2:#0f3347; --border:#1a4a62;
+  --accent:#083a4f; --cream:#e5e1dd; --cream2:#f0ece8; --gold:#c9a96e;
+  --text:#e5e1dd; --muted:#8aacbb; --success:#4caf82; --danger:#e05c5c;
+  --radius:12px; --grad:linear-gradient(135deg,#0d6e8a,#083a4f);
+  --grad-warm:linear-gradient(135deg,#c9a96e,#a8845a);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Raleway',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
 
-const sleep = (ms) => new Promise(r => setTimeout(r, ms));
+.header{position:sticky;top:0;z-index:100;background:rgba(7,30,42,.95);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:0 24px}
+.header-inner{max-width:1200px;margin:0 auto;height:66px;display:flex;align-items:center;gap:20px;justify-content:space-between}
+.logo{font-family:'Playfair Display',serif;font-weight:700;font-style:italic;font-size:1.25rem;color:var(--cream);flex-shrink:0}
+.logo span{color:var(--gold);font-style:normal}
+.search-box{flex:1;max-width:420px;position:relative}
+.search-box input{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:9px 16px 9px 40px;color:var(--text);font-family:'Raleway',sans-serif;font-size:.88rem;outline:none;transition:border-color .2s}
+.search-box input:focus{border-color:var(--gold)}
+.search-box input::placeholder{color:var(--muted)}
+.search-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:.9rem}
+.progress-badge{display:flex;align-items:center;gap:10px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:8px 16px;font-size:.82rem;white-space:nowrap;flex-shrink:0}
+.progress-badge .prog-num{font-family:'Playfair Display',serif;font-weight:700;color:var(--gold);font-size:1rem}
 
-async function fetchLesson(lessonId, apiKey) {
-  const res = await fetch(
-    `https://memberkit.com.br/api/v1/lessons/${lessonId}?api_key=${apiKey}`
-  );
-  if (!res.ok) return null;
-  return await res.json();
+.main{max-width:1200px;margin:0 auto;padding:40px 24px 100px}
+
+.hero{text-align:center;padding:56px 0 48px;position:relative}
+.hero::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:700px;height:350px;background:radial-gradient(ellipse,rgba(13,110,138,.12) 0%,transparent 70%);pointer-events:none}
+.hero-tag{display:inline-flex;align-items:center;gap:8px;background:rgba(201,169,110,.1);border:1px solid rgba(201,169,110,.3);border-radius:100px;padding:6px 18px;font-size:.78rem;color:var(--gold);margin-bottom:22px;font-weight:600;letter-spacing:.05em;text-transform:uppercase}
+.hero h1{font-family:'Playfair Display',serif;font-weight:700;font-size:clamp(2rem,4.5vw,3.2rem);line-height:1.12;margin-bottom:14px;color:var(--cream)}
+.hero h1 em{font-style:italic;color:var(--gold)}
+.hero p{color:var(--muted);font-size:.98rem;max-width:500px;margin:0 auto 36px;line-height:1.7}
+.stats-row{display:flex;justify-content:center;gap:14px;flex-wrap:wrap}
+.stat-pill{display:flex;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--border);border-radius:100px;padding:9px 20px;font-size:.84rem}
+.stat-pill .n{font-family:'Playfair Display',serif;font-weight:700;color:var(--gold);font-size:1rem}
+
+.loading-state{text-align:center;padding:80px 20px;color:var(--muted)}
+.spinner{width:40px;height:40px;border:3px solid var(--border);border-top-color:var(--gold);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 16px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.error-state{text-align:center;padding:60px 20px}
+.error-box{display:inline-block;background:rgba(224,92,92,.07);border:1px solid rgba(224,92,92,.25);border-radius:14px;padding:28px 36px;max-width:500px}
+.error-box h3{color:var(--danger);margin-bottom:8px;font-family:'Playfair Display',serif;font-size:1.2rem}
+.error-box p{color:var(--muted);font-size:.88rem;line-height:1.6}
+.retry-btn{margin-top:16px;background:var(--grad);border:none;border-radius:8px;padding:10px 22px;color:white;font-family:'Raleway',sans-serif;font-size:.88rem;font-weight:600;cursor:pointer;transition:opacity .2s}
+.retry-btn:hover{opacity:.85}
+
+.filter-row{display:flex;gap:8px;margin-bottom:32px;flex-wrap:wrap;align-items:center}
+.filter-label{font-size:.75rem;color:var(--muted);margin-right:4px;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+.filter-btn{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:6px 14px;color:var(--muted);font-family:'Raleway',sans-serif;font-size:.8rem;cursor:pointer;transition:all .2s;font-weight:500}
+.filter-btn:hover,.filter-btn.active{background:rgba(201,169,110,.12);border-color:var(--gold);color:var(--gold)}
+
+.module-section{margin-bottom:40px;animation:fadeUp .4s ease both}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+.module-header{display:flex;align-items:stretch;margin-bottom:18px;cursor:pointer;user-select:none;background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden;transition:border-color .2s}
+.module-header:hover{border-color:var(--gold)}
+.module-num-badge{width:72px;flex-shrink:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px 8px}
+.module-num-label{font-size:.58rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.55);margin-bottom:2px}
+.module-num-val{font-family:'Playfair Display',serif;font-weight:700;font-size:1.6rem;line-height:1}
+.module-info{flex:1;padding:14px 18px;display:flex;flex-direction:column;justify-content:center}
+.module-name-subtitle{font-size:.65rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:3px}
+.module-name{font-family:'Playfair Display',serif;font-style:italic;font-weight:600;font-size:1.08rem;color:var(--cream)}
+.module-meta-row{display:flex;align-items:center;gap:10px;margin-top:8px}
+.mod-count{font-size:.7rem;color:var(--muted);background:var(--surface2);border:1px solid var(--border);padding:2px 9px;border-radius:100px;font-weight:500}
+.module-progress-side{width:110px;flex-shrink:0;padding:14px 18px;display:flex;flex-direction:column;align-items:flex-end;justify-content:center;gap:6px;border-left:1px solid var(--border)}
+.module-progress-bar{width:72px;height:4px;background:var(--border);border-radius:2px;overflow:hidden}
+.module-progress-fill{height:100%;background:var(--grad-warm);border-radius:2px;transition:width .5s ease}
+.module-progress-pct{font-size:.72rem;color:var(--muted);font-weight:600}
+.chevron{color:var(--muted);font-size:.8rem;transition:transform .3s}
+.module-section.collapsed .chevron{transform:rotate(-90deg)}
+.module-section.collapsed .cards-grid{display:none}
+
+.mod-color-0{background:linear-gradient(135deg,#083a4f,#0a4d68)}
+.mod-color-1{background:linear-gradient(135deg,#0d5c3a,#0a4a2e)}
+.mod-color-2{background:linear-gradient(135deg,#5c3d0d,#4a300a)}
+.mod-color-3{background:linear-gradient(135deg,#3d0d5c,#2e0a4a)}
+.mod-color-4{background:linear-gradient(135deg,#5c0d1f,#4a0a18)}
+.mod-color-5{background:linear-gradient(135deg,#0d3d5c,#0a2e4a)}
+.mod-color-6{background:linear-gradient(135deg,#3d5c0d,#2e4a0a)}
+.mod-color-7{background:linear-gradient(135deg,#c9a96e,#a8845a)}
+
+.cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:14px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;transition:all .25s}
+.card:hover{border-color:rgba(201,169,110,.4);transform:translateY(-2px);box-shadow:0 8px 32px rgba(0,0,0,.3)}
+.card.completed{border-color:rgba(76,175,130,.35);background:rgba(76,175,130,.04)}
+
+.card-top{padding:14px 14px 10px;display:flex;align-items:flex-start;gap:10px}
+.card-check{width:20px;height:20px;border-radius:5px;border:2px solid var(--border);flex-shrink:0;margin-top:2px;display:flex;align-items:center;justify-content:center;transition:all .2s;cursor:pointer}
+.card.completed .card-check{background:var(--success);border-color:var(--success)}
+.card-check::after{content:'';display:none;width:4px;height:8px;border:2px solid white;border-top:none;border-left:none;transform:rotate(45deg) translateY(-1px)}
+.card.completed .card-check::after{display:block}
+.card-name{font-size:.86rem;font-weight:500;line-height:1.45;flex:1;color:var(--cream)}
+
+.card-checklist{padding:0 14px 10px}
+.card-checklist-bar{height:3px;background:var(--border);border-radius:2px;overflow:hidden;margin-bottom:8px}
+.card-checklist-fill{height:100%;background:var(--grad-warm);border-radius:2px;transition:width .4s}
+.card-checklist-items{display:flex;flex-direction:column;gap:4px}
+.card-cl-item{display:flex;align-items:center;gap:7px;cursor:pointer;font-size:.74rem;color:var(--muted);padding:3px 5px;border-radius:5px;transition:background .15s}
+.card-cl-item:hover{background:var(--surface2)}
+.card-cl-item.checked{opacity:.55;text-decoration:line-through}
+.cl-dot{width:14px;height:14px;border-radius:4px;border:1.5px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.card-cl-item.checked .cl-dot{background:var(--success);border-color:var(--success)}
+.card-cl-item.checked .cl-dot::after{content:'';display:block;width:3px;height:6px;border:1.5px solid white;border-top:none;border-left:none;transform:rotate(45deg) translateY(-1px)}
+
+.card-materials{padding:0 14px 10px;display:flex;flex-direction:column;gap:5px}
+.material-item{display:flex;align-items:center;gap:8px;background:var(--surface2);border:1px solid var(--border);border-radius:7px;padding:6px 9px;font-size:.74rem;color:var(--muted);transition:all .2s;text-decoration:none}
+.material-item:hover{border-color:rgba(201,169,110,.35);color:var(--cream)}
+.material-icon{font-size:.85rem;flex-shrink:0}
+.material-label{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.material-arrow{font-size:.68rem;flex-shrink:0}
+
+.card-footer{border-top:1px solid var(--border);padding:10px 14px;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.watch-btn{display:inline-flex;align-items:center;gap:5px;background:var(--grad);border:none;border-radius:7px;padding:7px 13px;color:white;font-family:'Raleway',sans-serif;font-size:.75rem;font-weight:700;cursor:pointer;text-decoration:none;transition:opacity .2s;flex-shrink:0;letter-spacing:.02em}
+.watch-btn:hover{opacity:.85}
+.open-btn{color:var(--gold);font-size:.75rem;font-weight:600;cursor:pointer;background:none;border:none;font-family:'Raleway',sans-serif}
+.open-btn:hover{text-decoration:underline}
+
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.78);backdrop-filter:blur(10px);z-index:1000;display:flex;align-items:flex-start;justify-content:center;padding:24px 16px;overflow-y:auto;opacity:0;transition:opacity .25s;pointer-events:none}
+.modal-overlay.open{opacity:1;pointer-events:all}
+.modal{background:var(--surface);border:1px solid var(--border);border-radius:18px;width:100%;max-width:700px;margin:auto;transform:translateY(24px);transition:transform .3s ease;overflow:hidden}
+.modal-overlay.open .modal{transform:translateY(0)}
+.modal-header{padding:22px 22px 14px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;gap:12px}
+.modal-check{width:26px;height:26px;border-radius:7px;border:2px solid var(--border);flex-shrink:0;margin-top:2px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s}
+.modal-check.done{background:var(--success);border-color:var(--success)}
+.modal-check.done::after{content:'';display:block;width:5px;height:10px;border:2px solid white;border-top:none;border-left:none;transform:rotate(45deg) translateY(-1px)}
+.modal-title{font-family:'Playfair Display',serif;font-weight:600;font-size:1.12rem;line-height:1.35;flex:1;color:var(--cream)}
+.modal-close{background:var(--surface2);border:none;border-radius:7px;width:30px;height:30px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--muted);font-size:.95rem;flex-shrink:0;transition:all .2s}
+.modal-close:hover{background:var(--border);color:var(--cream)}
+.modal-watch-row{padding:14px 22px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px}
+.modal-watch-btn{display:inline-flex;align-items:center;gap:8px;background:var(--grad);border:none;border-radius:10px;padding:10px 20px;color:white;font-family:'Raleway',sans-serif;font-size:.88rem;font-weight:700;cursor:pointer;text-decoration:none;transition:opacity .2s;letter-spacing:.02em}
+.modal-watch-btn:hover{opacity:.85}
+.modal-watch-hint{font-size:.78rem;color:var(--muted)}
+.modal-body{padding:20px 22px 24px;max-height:60vh;overflow-y:auto}
+.modal-body::-webkit-scrollbar{width:4px}
+.modal-body::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+
+.modal-checklist{margin-bottom:20px;background:var(--surface2);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.modal-checklist-header{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.modal-checklist-title{font-size:.75rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
+.modal-checklist-pct{font-size:.8rem;color:var(--gold);font-weight:600}
+.modal-checklist-bar{height:3px;background:var(--border)}
+.modal-checklist-fill{height:100%;background:var(--grad-warm);transition:width .4s}
+.modal-cl-item{display:flex;align-items:flex-start;gap:12px;padding:12px 16px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .15s}
+.modal-cl-item:last-child{border-bottom:none}
+.modal-cl-item:hover{background:rgba(255,255,255,.03)}
+.modal-cl-item.checked{opacity:.55}
+.modal-cl-dot{width:18px;height:18px;border-radius:5px;border:2px solid var(--border);flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.modal-cl-item.checked .modal-cl-dot{background:var(--success);border-color:var(--success)}
+.modal-cl-item.checked .modal-cl-dot::after{content:'';display:block;width:4px;height:8px;border:2px solid white;border-top:none;border-left:none;transform:rotate(45deg) translateY(-1px)}
+.modal-cl-text{font-size:.87rem;line-height:1.5;color:var(--muted);flex:1}
+.modal-cl-item.checked .modal-cl-text{text-decoration:line-through}
+
+.modal-materials{margin-bottom:20px}
+.modal-materials-title{font-size:.72rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px}
+.modal-material-item{display:flex;align-items:center;gap:10px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:10px 14px;margin-bottom:8px;text-decoration:none;color:var(--cream);transition:all .2s}
+.modal-material-item:hover{border-color:var(--gold);background:rgba(201,169,110,.06)}
+.modal-material-icon{font-size:1rem;flex-shrink:0;width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center}
+.icon-bg-blue{background:rgba(13,110,138,.2)}.icon-bg-gold{background:rgba(201,169,110,.15)}
+.icon-bg-purple{background:rgba(120,80,200,.2)}.icon-bg-green{background:rgba(76,175,130,.15)}.icon-bg-pink{background:rgba(200,80,120,.2)}
+.modal-material-text{flex:1}
+.modal-material-label{font-size:.86rem;font-weight:500;display:block;color:var(--cream)}
+.modal-material-type{font-size:.73rem;color:var(--muted)}
+.modal-material-arrow{margin-left:auto;color:var(--muted);font-size:.78rem}
+
+.md-content{line-height:1.75;font-size:.89rem}
+.md-content h1,.md-content h2{font-family:'Playfair Display',serif;font-weight:700;margin:20px 0 8px;line-height:1.3;color:var(--cream)}
+.md-content h1{font-size:1.1rem}.md-content h2{font-size:.97rem}
+.md-content h3,.md-content h4{font-weight:600;font-size:.88rem;margin:12px 0 5px;color:var(--cream)}
+.md-content p{margin-bottom:8px;color:var(--muted)}
+.md-content strong{color:var(--cream);font-weight:700}
+.md-content a{color:var(--gold);text-decoration:none;border-bottom:1px solid rgba(201,169,110,.3)}
+.md-content a:hover{border-color:var(--gold)}
+.md-content ul,.md-content ol{padding-left:18px;margin-bottom:8px}
+.md-content li{margin-bottom:3px;color:var(--muted)}
+.md-content hr{border:none;border-top:1px solid var(--border);margin:14px 0}
+.md-content code{background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:1px 6px;font-size:.83em;font-family:monospace}
+.no-content{text-align:center;padding:28px;color:var(--muted);font-size:.86rem}
+.modal-divider{border:none;border-top:1px solid var(--border);margin:16px 0}
+
+/* TRANSCRIPTION MATERIAL */
+.transcription-material{background:rgba(201,169,110,.06);border:1px solid rgba(201,169,110,.2);border-radius:12px;padding:16px;margin-bottom:20px}
+.tm-header{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.tm-icon{font-size:1rem}
+.tm-title{font-family:'Playfair Display',serif;font-weight:600;font-size:.95rem;color:var(--cream);flex:1}
+.tm-summary{font-size:.84rem;color:var(--muted);line-height:1.65;margin-bottom:14px}
+.tm-keypoints{background:var(--surface);border-radius:8px;padding:12px}
+.tm-kp-title{font-size:.7rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+.kp-item{display:flex;align-items:flex-start;gap:8px;margin-bottom:8px;font-size:.83rem;color:var(--muted);line-height:1.5}
+.kp-item:last-child{margin-bottom:0}
+.kp-dot{color:var(--gold);font-size:.5rem;margin-top:5px;flex-shrink:0}
+
+@media(max-width:640px){
+  .header-inner{gap:10px}.logo{font-size:1rem}.search-box{max-width:150px}
+  .hero h1{font-size:1.8rem}.cards-grid{grid-template-columns:1fr}
+  .modal-body{max-height:65vh}.module-progress-side{display:none}
 }
 
-async function fetchInBatches(lessons, apiKey, batchSize = 5, delay = 600) {
-  const results = [];
-  for (let i = 0; i < lessons.length; i += batchSize) {
-    const batch = lessons.slice(i, i + batchSize);
-    const batchResults = await Promise.all(
-      batch.map(l => fetchLesson(l.id, apiKey).catch(() => null))
-    );
-    results.push(...batchResults);
-    if (i + batchSize < lessons.length) await sleep(delay);
+/* USER BADGE */
+.user-badge {
+  display:flex;align-items:center;gap:6px;
+  background:var(--surface2);border:1px solid var(--border);
+  border-radius:8px;padding:6px 12px;font-size:.75rem;
+  color:var(--muted);cursor:pointer;max-width:160px;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  transition:border-color .2s;
+}
+.user-badge:hover{border-color:var(--gold);color:var(--gold)}
+.user-badge::before{content:'👤';font-size:.8rem}
+
+/* EMAIL MODAL */
+.email-modal-overlay {
+  position:fixed;inset:0;background:rgba(7,30,42,.97);
+  z-index:2000;display:flex;align-items:center;justify-content:center;
+  padding:24px;opacity:0;pointer-events:none;transition:opacity .3s;
+}
+.email-modal-overlay.open{opacity:1;pointer-events:all}
+.email-modal {
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:20px;padding:40px 36px;width:100%;max-width:420px;
+  text-align:center;
+  animation:slideUp .35s ease;
+}
+@keyframes slideUp{from{transform:translateY(24px);opacity:0}to{transform:translateY(0);opacity:1}}
+.em-logo {
+  font-family:'Playfair Display',serif;font-weight:700;font-style:italic;
+  font-size:1.4rem;color:var(--cream);margin-bottom:20px;
+}
+.em-logo span{color:var(--gold);font-style:normal}
+.em-title {
+  font-family:'Playfair Display',serif;font-weight:700;
+  font-size:1.5rem;line-height:1.25;color:var(--cream);margin-bottom:12px;
+}
+.em-title em{font-style:italic;color:var(--gold)}
+.em-subtitle{font-size:.88rem;color:var(--muted);line-height:1.6;margin-bottom:24px}
+.em-input-wrap{margin-bottom:14px}
+.em-input-wrap input {
+  width:100%;background:var(--surface2);border:1px solid var(--border);
+  border-radius:10px;padding:12px 16px;color:var(--text);
+  font-family:'Raleway',sans-serif;font-size:.95rem;outline:none;
+  transition:border-color .2s;text-align:center;
+}
+.em-input-wrap input:focus{border-color:var(--gold)}
+.em-input-wrap input::placeholder{color:var(--muted)}
+.em-btn {
+  width:100%;background:var(--grad);border:none;border-radius:10px;
+  padding:12px 20px;color:white;font-family:'Raleway',sans-serif;
+  font-size:.95rem;font-weight:700;cursor:pointer;transition:opacity .2s;
+  letter-spacing:.02em;margin-bottom:14px;
+}
+.em-btn:hover{opacity:.85}
+.em-btn:disabled{opacity:.5;cursor:not-allowed}
+.em-hint{font-size:.75rem;color:var(--muted)}
+</style>
+</head>
+<body>
+<header class="header">
+  <div class="header-inner">
+    <div class="logo">SMIA <span>🤖</span></div>
+    <div class="search-box">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="searchInput" placeholder="Buscar aula..." />
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;flex-shrink:0">
+      <div class="user-badge" id="userEmailBadge" style="display:none" onclick="showEmailModal()"></div>
+      <div class="progress-badge">
+        <span>🎯</span>
+        <span class="prog-num" id="globalPct">0%</span>
+        <span style="color:var(--muted)">concluído</span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- EMAIL MODAL -->
+<div class="email-modal-overlay" id="emailModal">
+  <div class="email-modal">
+    <div class="em-logo">SMIA <span>🤖</span></div>
+    <h2 class="em-title">Bem-vinda à<br><em>Mentoria Social Media IA</em></h2>
+    <p class="em-subtitle">Digite seu email de compra para carregar seu progresso em qualquer dispositivo.</p>
+    <div class="em-input-wrap">
+      <input type="email" id="emailInput" placeholder="seu@email.com"
+        onkeydown="if(event.key==='Enter') submitEmail()" />
+    </div>
+    <button class="em-btn" id="emailSubmitBtn" onclick="submitEmail()">Entrar →</button>
+    <p class="em-hint">Seu progresso fica salvo na nuvem 🌥️</p>
+  </div>
+</div>
+
+<main class="main">
+  <div class="hero">
+    <div class="hero-tag">✦ Rayssa Academy</div>
+    <h1>Mentoria <em>Social Media IA</em> 🤖🧠</h1>
+    <p>Seu material de apoio completo. Acesse aulas, templates, exercícios e links importantes.</p>
+    <div class="stats-row" id="statsRow">
+      <div class="stat-pill"><span class="n">—</span> Módulos</div>
+      <div class="stat-pill"><span class="n">—</span> Aulas</div>
+    </div>
+  </div>
+  <div class="filter-row" id="filterRow" style="display:none">
+    <span class="filter-label">Filtrar:</span>
+    <button class="filter-btn active" data-filter="all">Tudo</button>
+    <button class="filter-btn" data-filter="video">🎬 Com vídeo</button>
+    <button class="filter-btn" data-filter="content">📄 Com material</button>
+    <button class="filter-btn" data-filter="pending">⏳ Pendentes</button>
+    <button class="filter-btn" data-filter="done">✅ Concluídos</button>
+  </div>
+  <div id="appContent">
+    <div class="loading-state"><div class="spinner"></div><p>Carregando aulas...</p></div>
+  </div>
+</main>
+
+<div class="modal-overlay" id="modalOverlay" onclick="handleOverlayClick(event)">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-check" id="modalCheck" onclick="toggleModalDone()"></div>
+      <div class="modal-title" id="modalTitle"></div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-watch-row" id="modalWatchRow" style="display:none">
+      <a class="modal-watch-btn" id="modalWatchBtn" href="#" target="_blank">▶ Assistir aula na plataforma</a>
+      <span class="modal-watch-hint">Abre no MemberKit</span>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+  </div>
+</div>
+
+<script>
+const MEMBERKIT_BASE = 'https://the-owner-academy.memberkit.com.br/275132-social-media-ia';
+
+// ===== MATERIAIS DE TRANSCRIÇÃO =====
+// Cada entrada tem: keywords (SEO), summary, keyPoints, checklist
+// Keywords são usadas tanto no material de apoio quanto na busca interna
+const LESSON_MATERIALS = {
+  "seja-bem-vindo": {
+    keywords: [
+      "plano de ação","60 dias","contratos recorrentes","alavancas","ima de clientes",
+      "one click","salário automático","ativação","primeiro cliente","escala",
+      "garantia","sócia","checklist","mentalidade","renda extra","social media ia",
+      "micro vitória","conquista","tijolinhos","3 contratos","7 contratos",
+      "curso vivo","desistência","scripts","proposta","digital"
+    ],
+    summary: "Apresentação do plano de ação dos próximos 60 dias: como o curso foi pensado para te levar do zero a 7 contratos recorrentes, sem pular etapas, com suporte completo.",
+    keyPoints: [
+      "🎯 Objetivo: zero a 7 contratos recorrentes em 60 dias",
+      "⚙️ Sistema das 3 alavancas: IMA de Clientes + Tecnologia One Click (IA) + Salário Automático",
+      "📅 4 fases: Ativação (sem. 1) → Habilidades (sem. 2-3) → Clientes (sem. 4) → Escala (sem. 5-8)",
+      "🔄 Curso vivo: novas aulas adicionadas toda semana com base nas dúvidas dos alunos",
+      "🛡️ Garantia de 365 dias se você aplicar tudo que foi ensinado",
+      "🤝 Acompanhamento de sócia por 1 ano — você nunca estará sozinha nessa jornada",
+      "✅ Scripts prontos, checklist de 60 dias e propostas prontas fornecidos"
+    ],
+    checklist: [
+      "Assistir a aula completa",
+      "Baixar o Checklist de 60 dias",
+      "Entrar no Grupo de Alunos",
+      "Salvar o Calendário de Aulas Ao Vivo",
+      "Definir seu horário fixo de estudo diário",
+      "Escrever seu 'porquê' — por que você comprou esse curso?"
+    ]
   }
-  return results;
+  // Próximas transcrições serão adicionadas aqui
+};
+
+// Busca o material de uma aula pelo título
+function getLessonMaterial(title) {
+  if (!title) return null;
+  const norm = t => t.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,' ').trim();
+  const normTitle = norm(title);
+  for (const [key, mat] of Object.entries(LESSON_MATERIALS)) {
+    const normKey = norm(key.replace(/-/g,' '));
+    // Match by slug or by keywords overlap
+    if (normTitle.includes(normKey) || normKey.includes(normTitle.substring(0,8))) return mat;
+    // Check if any keyword matches the title
+    if (mat.keywords.some(k => normTitle.includes(norm(k)) || norm(k).includes(normTitle.substring(0,6)))) return mat;
+  }
+  return null;
 }
 
-export default async function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET');
-  // Cache por 10 minutos na Vercel CDN — evita rebuscar a cada acesso
-  res.setHeader('Cache-Control', 's-maxage=600, stale-while-revalidate=300');
+// SEO: verifica se a query bate com keywords de uma aula
+function lessonMatchesKeywords(lesson, query) {
+  if (!query) return false;
+  const norm = t => t.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+  const q = norm(query);
+  const mat = getLessonMaterial(lesson.title);
+  if (!mat) return false;
+  return mat.keywords.some(k => norm(k).includes(q) || q.includes(norm(k)));
+}
 
-  if (req.method === 'OPTIONS') return res.status(200).end();
+// Mapa de nomes e ordem dos módulos
+const MODULE_META = [
+  { keywords: ['comece','bem-vindo','boas-vindas','inicio','início'], label:'Módulo 0', name:'Bem-vindo (a)', order:0 },
+  { keywords: ['social media ia','o que é','oque é'], label:'Módulo 1', name:'O que é um Social Media IA?', order:1 },
+  { keywords: ['pix express','pix','express'], label:'Módulo 2', name:'PIX Express', order:2 },
+  { keywords: ['primeiro cliente','1º cliente'], label:'Módulo 3', name:'Seu Primeiro Cliente', order:3 },
+  { keywords: ['robôzinhos','robozinhos','funcionários','funcionarios'], label:'Módulo 4', name:'Robôzinhos Funcionários', order:4 },
+  { keywords: ['recorrentes','clientes recorrentes'], label:'Módulo 5', name:'Clientes Recorrentes', order:5 },
+  { keywords: ['contratação','contratacao','automática','automatica'], label:'Módulo 6', name:'Contratação Automática', order:6 },
+  { keywords: ['bônus','bonus','aceleradores'], label:'Bônus', name:'Bônus Aceleradores', order:7 },
+];
 
-  const API_KEY = process.env.MEMBERKIT_API_KEY;
-  const COURSE_ID = process.env.MEMBERKIT_COURSE_ID;
+const DEFAULT_CHECKLIST = [
+  'Assistir a aula completa',
+  'Anotar os pontos principais',
+  'Aplicar o exercício proposto',
+  'Revisar o material de apoio',
+];
 
-  if (!API_KEY || !COURSE_ID) {
-    return res.status(500).json({ error: 'Variáveis de ambiente não configuradas.' });
+let COURSE_DATA = null;
+let completedCards = {};
+let checklistState = {};
+let currentFilter = 'all';
+let currentSearch = '';
+let currentLesson = null;
+let currentEmail = localStorage.getItem('smia_email') || '';
+let saveTimeout = null;
+
+// ===== EMAIL LOGIN =====
+function showEmailModal() {
+  document.getElementById('emailModal').classList.add('open');
+}
+function closeEmailModal() {
+  if (!currentEmail) return; // Obriga login
+  document.getElementById('emailModal').classList.remove('open');
+}
+async function submitEmail() {
+  const input = document.getElementById('emailInput');
+  const email = input.value.trim().toLowerCase();
+  if (!email || !email.includes('@')) {
+    input.style.borderColor = '#e05c5c';
+    return;
   }
+  input.style.borderColor = '';
+  const btn = document.getElementById('emailSubmitBtn');
+  btn.textContent = 'Carregando...';
+  btn.disabled = true;
 
+  currentEmail = email;
+  localStorage.setItem('smia_email', email);
+  await loadProgress();
+  document.getElementById('emailModal').classList.remove('open');
+  document.getElementById('userEmailBadge').textContent = email;
+  document.getElementById('userEmailBadge').style.display = 'flex';
+  btn.textContent = 'Entrar';
+  btn.disabled = false;
+}
+
+// ===== PROGRESS SYNC =====
+async function loadProgress() {
+  if (!currentEmail) return;
   try {
-    // 1. Busca estrutura do curso
-    const courseRes = await fetch(
-      `https://memberkit.com.br/api/v1/courses/${COURSE_ID}?api_key=${API_KEY}`
-    );
-    if (!courseRes.ok) throw new Error(`MemberKit retornou ${courseRes.status}`);
-    const course = await courseRes.json();
-
-    // 2. Coleta todas as aulas de todas as seções
-    const allLessons = (course.sections || []).flatMap(s => s.lessons || []);
-
-    // 3. Busca em lotes de 5 com 600ms de pausa — respeita o rate limit da API
-    const lessonDetails = await fetchInBatches(allLessons, API_KEY, 5, 600);
-
-    // 4. Monta mapa id -> detalhes
-    const lessonMap = {};
-    lessonDetails.forEach(l => { if (l) lessonMap[l.id] = l; });
-
-    // 5. Reconstrói seções com conteúdo completo, ordenando aulas por position
-    const sectionsWithContent = (course.sections || []).map(section => ({
-      ...section,
-      lessons: (section.lessons || [])
-        .sort((a, b) => (a.position || 0) - (b.position || 0))
-        .map(l => lessonMap[l.id] || { ...l, content: '', files: [], video: null })
-    }));
-
-    return res.status(200).json({
-      id: course.id,
-      name: course.name,
-      description: course.description,
-      sections: sectionsWithContent,
-    });
-
-  } catch (err) {
-    console.error('Erro ao buscar dados do MemberKit:', err);
-    return res.status(500).json({ error: err.message });
+    const res = await fetch(`/api/progress?email=${encodeURIComponent(currentEmail)}`);
+    if (!res.ok) return;
+    const data = await res.json();
+    completedCards = data.completed || {};
+    checklistState = data.checklist || {};
+    // Fallback to localStorage if cloud is empty
+    if (!Object.keys(completedCards).length) {
+      completedCards = JSON.parse(localStorage.getItem('smia_completed') || '{}');
+    }
+    if (!Object.keys(checklistState).length) {
+      checklistState = JSON.parse(localStorage.getItem('smia_checklist') || '{}');
+    }
+    if (COURSE_DATA) renderApp();
+  } catch (e) {
+    // Fallback to localStorage silently
+    completedCards = JSON.parse(localStorage.getItem('smia_completed') || '{}');
+    checklistState = JSON.parse(localStorage.getItem('smia_checklist') || '{}');
   }
 }
+
+function scheduleSave() {
+  // Save locally immediately
+  localStorage.setItem('smia_completed', JSON.stringify(completedCards));
+  localStorage.setItem('smia_checklist', JSON.stringify(checklistState));
+  // Debounce cloud save — wait 1.5s after last change
+  clearTimeout(saveTimeout);
+  if (!currentEmail) return;
+  saveTimeout = setTimeout(async () => {
+    try {
+      await fetch('/api/progress', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: currentEmail, completed: completedCards, checklist: checklistState })
+      });
+    } catch (e) {}
+  }, 1500);
+}
+
+async function loadCourse() {
+  // Show email modal if no email
+  if (!currentEmail) {
+    showEmailModal();
+  }
+  try {
+    const res = await fetch('/api/course');
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    COURSE_DATA = await res.json();
+    // Ordena seções e aulas por position
+    COURSE_DATA.sections = sortSections(COURSE_DATA.sections);
+    COURSE_DATA.sections.forEach(s => {
+      s.lessons = s.lessons.sort((a, b) => (a.position || 0) - (b.position || 0));
+    });
+    // Load progress if email already known
+    if (currentEmail) {
+      document.getElementById('userEmailBadge').textContent = currentEmail;
+      document.getElementById('userEmailBadge').style.display = 'flex';
+      await loadProgress();
+    }
+    renderApp();
+  } catch (err) {
+    document.getElementById('appContent').innerHTML = `
+      <div class="error-state"><div class="error-box">
+        <h3>⚠️ Não foi possível carregar</h3>
+        <p>Verifique as variáveis de ambiente na Vercel e tente novamente.</p>
+        <p style="margin-top:8px;font-size:.78rem;opacity:.5">${err.message}</p>
+        <button class="retry-btn" onclick="loadCourse()">Tentar novamente</button>
+      </div></div>`;
+  }
+}
+
+function getSectionMeta(name) {
+  const n = (name || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+  for (const m of MODULE_META) {
+    if (m.keywords.some(k => n.includes(k.normalize('NFD').replace(/[\u0300-\u036f]/g,'')))) return m;
+  }
+  const num = (name||'').match(/\d+/);
+  return { label: 'Módulo', name: name, order: num ? parseInt(num[0]) : 99 };
+}
+
+function sortSections(sections) {
+  return [...sections].sort((a,b) => getSectionMeta(a.name).order - getSectionMeta(b.name).order);
+}
+
+function getTotalLessons() {
+  return COURSE_DATA ? COURSE_DATA.sections.reduce((s,sec) => s + sec.lessons.length, 0) : 0;
+}
+function getCompletedCount() {
+  return Object.values(completedCards).filter(Boolean).length;
+}
+function getSectionProgress(section) {
+  const total = section.lessons.length;
+  if (!total) return 0;
+  return Math.round(section.lessons.filter(l => completedCards[l.id]).length / total * 100);
+}
+function lessonMatchesFilter(lesson) {
+  if (currentSearch) {
+    const q = currentSearch.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+    const inTitle = lesson.title.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').includes(q);
+    const inContent = (lesson.content||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').includes(q);
+    // SEO: também busca nas keywords da transcrição
+    const inKeywords = lessonMatchesKeywords(lesson, currentSearch);
+    if (!inTitle && !inContent && !inKeywords) return false;
+  }
+  if (currentFilter === 'video') return !!lesson.video;
+  if (currentFilter === 'content') return !!(lesson.content && lesson.content.trim());
+  if (currentFilter === 'pending') return !completedCards[lesson.id];
+  if (currentFilter === 'done') return !!completedCards[lesson.id];
+  return true;
+}
+
+function getMemberkitUrl(lesson) {
+  const slug = lesson.slug || lesson.title.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+  return `${MEMBERKIT_BASE}/${lesson.id}-${slug}`;
+}
+
+function extractLinks(html) {
+  if (!html) return [];
+  const links = [];
+  try {
+    const doc = new DOMParser().parseFromString(html, 'text/html');
+    doc.querySelectorAll('a[href]').forEach(a => {
+      const href = a.getAttribute('href');
+      const text = a.textContent.trim();
+      if (href && href.startsWith('http') && text && !text.startsWith('http') && text.length > 2) {
+        links.push({ href, text: text.length > 55 ? text.substring(0,52)+'...' : text });
+      }
+    });
+  } catch(e) {}
+  return links;
+}
+
+function getLinkMeta(href) {
+  if (href.includes('canva.com')) return {icon:'🎨',type:'Template Canva',bg:'icon-bg-purple'};
+  if (href.includes('docs.google.com/document')) return {icon:'📄',type:'Google Docs',bg:'icon-bg-blue'};
+  if (href.includes('docs.google.com/spreadsheets')) return {icon:'📊',type:'Planilha Google',bg:'icon-bg-green'};
+  if (href.includes('drive.google.com')) return {icon:'📁',type:'Google Drive',bg:'icon-bg-gold'};
+  if (href.includes('youtube.com')||href.includes('youtu.be')) return {icon:'▶️',type:'YouTube',bg:'icon-bg-pink'};
+  if (href.includes('t.me')||href.includes('telegram')) return {icon:'✈️',type:'Telegram',bg:'icon-bg-blue'};
+  if (href.includes('trello.com')) return {icon:'📋',type:'Trello',bg:'icon-bg-blue'};
+  if (href.includes('autentique')) return {icon:'✍️',type:'Contrato',bg:'icon-bg-gold'};
+  if (href.includes('lovable.dev')) return {icon:'💜',type:'Lovable',bg:'icon-bg-purple'};
+  if (href.includes('chatgpt.com')||href.includes('openai.com')) return {icon:'🤖',type:'ChatGPT',bg:'icon-bg-green'};
+  if (href.includes('getninjas')) return {icon:'💼',type:'GetNinjas',bg:'icon-bg-gold'};
+  if (href.includes('facebook.com')||href.includes('meta.com')) return {icon:'📘',type:'Meta',bg:'icon-bg-blue'};
+  if (href.includes('apps.apple.com')||href.includes('play.google.com')) return {icon:'📱',type:'App',bg:'icon-bg-purple'};
+  return {icon:'🔗',type:'Link',bg:'icon-bg-blue'};
+}
+
+function stripHtml(html) {
+  try { return new DOMParser().parseFromString(html,'text/html').body.textContent || ''; } catch(e) { return ''; }
+}
+
+function getClState(lessonId) {
+  if (!checklistState[lessonId]) checklistState[lessonId] = {};
+  return checklistState[lessonId];
+}
+function getClProgress(lessonId) {
+  const s = getClState(lessonId);
+  const done = DEFAULT_CHECKLIST.filter((_,i) => s[i]).length;
+  return { done, total: DEFAULT_CHECKLIST.length, pct: Math.round(done/DEFAULT_CHECKLIST.length*100) };
+}
+function toggleClItem(lessonId, idx) {
+  if (!checklistState[lessonId]) checklistState[lessonId] = {};
+  checklistState[lessonId][idx] = !checklistState[lessonId][idx];
+  scheduleSave();
+}
+
+function parseMarkdown(text) {
+  if (!text) return '';
+  if (text.trim().startsWith('<')) return text.replace(/<script[^>]*>[\s\S]*?<\/script>/gi,'').replace(/<style[^>]*>[\s\S]*?<\/style>/gi,'');
+  return text
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/^#### (.+)$/gm,'<h4>$1</h4>').replace(/^### (.+)$/gm,'<h3>$1</h3>')
+    .replace(/^## (.+)$/gm,'<h2>$1</h2>').replace(/^# (.+)$/gm,'<h1>$1</h1>')
+    .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>').replace(/\*(.+?)\*/g,'<em>$1</em>')
+    .replace(/\[([^\]]+)\]\(([^)]+)\)/g,'<a href="$2" target="_blank" rel="noopener">$1</a>')
+    .replace(/^---$/gm,'<hr>').replace(/^- (.+)$/gm,'<li>$1</li>')
+    .replace(/(<li>[\s\S]*?<\/li>\n?)+/g,m=>'<ul>'+m+'</ul>')
+    .replace(/^\d+\. (.+)$/gm,'<li>$1</li>')
+    .replace(/^(?!<[hul\/]|<hr|<li)(.+)$/gm,'<p>$1</p>').replace(/<p><\/p>/g,'')
+    .replace(/`(.+?)`/g,'<code>$1</code>');
+}
+
+function renderApp() {
+  const total = getTotalLessons();
+  const done = getCompletedCount();
+  const pct = total ? Math.round(done/total*100) : 0;
+  document.getElementById('globalPct').textContent = pct + '%';
+  document.getElementById('statsRow').innerHTML = `
+    <div class="stat-pill"><span class="n">${COURSE_DATA.sections.length}</span> Módulos</div>
+    <div class="stat-pill"><span class="n">${total}</span> Aulas</div>
+    <div class="stat-pill"><span class="n">${done}</span> Concluídas</div>
+    <div class="stat-pill"><span class="n">${total-done}</span> Pendentes</div>`;
+  document.getElementById('filterRow').style.display = 'flex';
+
+  let html = ''; let anyVisible = false;
+
+  COURSE_DATA.sections.forEach((section, si) => {
+    const filtered = section.lessons.filter(lessonMatchesFilter);
+    if (!filtered.length) return;
+    anyVisible = true;
+    const prog = getSectionProgress(section);
+    const meta = getSectionMeta(section.name);
+
+    const cardsHtml = filtered.map(lesson => {
+      const isDone = !!completedCards[lesson.id];
+      const {pct:clPct} = getClProgress(lesson.id);
+      const clState = getClState(lesson.id);
+      const clItems = DEFAULT_CHECKLIST.map((item,i) =>
+        `<div class="card-cl-item ${clState[i]?'checked':''}" onclick="event.stopPropagation();cardCl(${lesson.id},${i},this)">
+          <div class="cl-dot"></div><span>${item}</span></div>`).join('');
+      const links = extractLinks(lesson.content||'');
+      const matItems = links.slice(0,3).map(l => {
+        const m = getLinkMeta(l.href);
+        return `<a class="material-item" href="${l.href}" target="_blank" rel="noopener" onclick="event.stopPropagation()">
+          <span class="material-icon">${m.icon}</span><span class="material-label">${l.text}</span><span class="material-arrow">↗</span></a>`;
+      }).join('');
+      const filesItems = (lesson.files||[]).slice(0,2).map(f =>
+        `<a class="material-item" href="${f.url}" target="_blank" rel="noopener" onclick="event.stopPropagation()">
+          <span class="material-icon">📎</span><span class="material-label">${f.filename||'Arquivo'}</span><span class="material-arrow">↓</span></a>`).join('');
+      const materials = (matItems||filesItems) ? `<div class="card-materials">${matItems}${filesItems}</div>` : '';
+
+      return `<div class="card ${isDone?'completed':''}" data-lid="${lesson.id}">
+        <div class="card-top" onclick="openLesson(${lesson.id})" style="cursor:pointer">
+          <div class="card-check" onclick="event.stopPropagation();toggleDone(${lesson.id})"></div>
+          <div class="card-name">${lesson.title}</div>
+        </div>
+        <div class="card-checklist">
+          <div class="card-checklist-bar"><div class="card-checklist-fill" style="width:${clPct}%"></div></div>
+          <div class="card-checklist-items">${clItems}</div>
+        </div>
+        ${materials}
+        <div class="card-footer">
+          <a class="watch-btn" href="${getMemberkitUrl(lesson)}" target="_blank" rel="noopener">▶ Assistir</a>
+          <button class="open-btn" onclick="openLesson(${lesson.id})">Ver material →</button>
+        </div>
+      </div>`;
+    }).join('');
+
+    html += `<div class="module-section" style="animation-delay:${si*.05}s">
+      <div class="module-header" onclick="toggleModule(this)">
+        <div class="module-num-badge mod-color-${si%8}">
+          <span class="module-num-label">${meta.label}</span>
+          <span class="module-num-val">${meta.order}</span>
+        </div>
+        <div class="module-info">
+          <div class="module-name-subtitle">${meta.label}</div>
+          <div class="module-name">${meta.name}</div>
+          <div class="module-meta-row"><span class="mod-count">${filtered.length} aulas</span></div>
+        </div>
+        <div class="module-progress-side">
+          <div class="module-progress-bar"><div class="module-progress-fill" style="width:${prog}%"></div></div>
+          <span class="module-progress-pct">${prog}%</span>
+          <span class="chevron">▾</span>
+        </div>
+      </div>
+      <div class="cards-grid">${cardsHtml}</div>
+    </div>`;
+  });
+
+  if (!anyVisible) html = `<div style="text-align:center;padding:60px 20px;color:var(--muted)"><div style="font-size:3rem;margin-bottom:12px">🔍</div><p>Nenhuma aula encontrada</p></div>`;
+  document.getElementById('appContent').innerHTML = html;
+}
+
+function toggleModule(h) { h.parentElement.classList.toggle('collapsed'); }
+
+function toggleDone(id) {
+  completedCards[id] = !completedCards[id];
+  if (!completedCards[id]) {
+    delete completedCards[id];
+    // Desmarca todos os itens do checklist
+    if (checklistState[id]) delete checklistState[id];
+  } else {
+    // Marca todos os itens do checklist automaticamente
+    const lesson = COURSE_DATA.sections.flatMap(s=>s.lessons).find(l=>l.id===id);
+    const mat = lesson ? getLessonMaterial(lesson.title) : null;
+    const cl = (mat && mat.checklist) ? mat.checklist : DEFAULT_CHECKLIST;
+    checklistState[id] = {};
+    cl.forEach((_,i) => { checklistState[id][i] = true; });
+  }
+  scheduleSave();
+  renderApp();
+}
+
+function cardCl(lessonId, idx, el) {
+  toggleClItem(lessonId, idx);
+  el.classList.toggle('checked');
+  const lesson = COURSE_DATA.sections.flatMap(s=>s.lessons).find(l=>l.id===lessonId);
+  const mat = lesson ? getLessonMaterial(lesson.title) : null;
+  const cl = (mat && mat.checklist) ? mat.checklist : DEFAULT_CHECKLIST;
+  const state = getClState(lessonId);
+  const done = cl.filter((_,i) => state[i]).length;
+  const pct = Math.round(done/cl.length*100);
+  // Update progress bar
+  const card = el.closest('.card');
+  if (card) { const f = card.querySelector('.card-checklist-fill'); if(f) f.style.width=pct+'%'; }
+  // Auto-complete card when all checklist items are done
+  if (done === cl.length && !completedCards[lessonId]) {
+    completedCards[lessonId] = true;
+    scheduleSave();
+    renderApp();
+  } else if (done < cl.length && completedCards[lessonId]) {
+    // Auto-uncomplete card if any item is unchecked
+    delete completedCards[lessonId];
+    scheduleSave();
+    renderApp();
+  } else {
+    scheduleSave();
+  }
+}
+
+function openLesson(lessonId) {
+  if (!COURSE_DATA) return;
+  const lesson = COURSE_DATA.sections.flatMap(s=>s.lessons).find(l=>l.id===lessonId);
+  if (!lesson) return;
+  currentLesson = lesson;
+
+  document.getElementById('modalTitle').textContent = lesson.title;
+  document.getElementById('modalCheck').className = 'modal-check' + (completedCards[lesson.id]?' done':'');
+  document.getElementById('modalWatchRow').style.display = 'flex';
+  document.getElementById('modalWatchBtn').href = getMemberkitUrl(lesson);
+
+  // Use checklist from transcription if available, otherwise default
+  const lessonMat = getLessonMaterial(lesson.title);
+  const activeChecklist = (lessonMat && lessonMat.checklist) ? lessonMat.checklist : DEFAULT_CHECKLIST;
+  const clState = getClState(lessonId);
+  const clTotal = activeChecklist.length;
+  const clDone = activeChecklist.filter((_,i) => clState[i]).length;
+  const clPct = Math.round(clDone/clTotal*100);
+  const clItems = activeChecklist.map((item,i) =>
+    `<div class="modal-cl-item ${clState[i]?'checked':''}" onclick="modalCl(${lessonId},${i},this)">
+      <div class="modal-cl-dot"></div><span class="modal-cl-text">${item}</span></div>`).join('');
+
+  // Transcription material section
+  let transcriptionHtml = '';
+  if (lessonMat) {
+    const kpItems = lessonMat.keyPoints.map(k =>
+      `<div class="kp-item"><span class="kp-dot">◆</span><span>${k}</span></div>`).join('');
+    transcriptionHtml = `
+      <div class="transcription-material">
+        <div class="tm-header">
+          <span class="tm-icon">📝</span>
+          <span class="tm-title">Material de Apoio</span>
+        </div>
+        <p class="tm-summary">${lessonMat.summary}</p>
+        <div class="tm-keypoints">
+          <div class="tm-kp-title">Pontos-chave desta aula</div>
+          ${kpItems}
+        </div>
+      </div>`;
+  }
+
+  // Links and files
+  const links = extractLinks(lesson.content||'');
+  const matItems = [
+    ...links.map(l => {
+      const m = getLinkMeta(l.href);
+      return `<a class="modal-material-item" href="${l.href}" target="_blank" rel="noopener">
+        <div class="modal-material-icon ${m.bg}">${m.icon}</div>
+        <div class="modal-material-text"><span class="modal-material-label">${l.text}</span><span class="modal-material-type">${m.type}</span></div>
+        <span class="modal-material-arrow">↗</span></a>`;
+    }),
+    ...(lesson.files||[]).map(f =>
+      `<a class="modal-material-item" href="${f.url}" target="_blank" rel="noopener">
+        <div class="modal-material-icon icon-bg-gold">📎</div>
+        <div class="modal-material-text"><span class="modal-material-label">${f.filename||'Arquivo'}</span><span class="modal-material-type">Arquivo anexo</span></div>
+        <span class="modal-material-arrow">↓</span></a>`)
+  ];
+  const materialsHtml = matItems.length
+    ? `<div class="modal-materials"><div class="modal-materials-title">📚 Materiais desta aula</div>${matItems.join('')}</div>`
+    : '';
+
+  // Text content
+  const textContent = lesson.content ? stripHtml(lesson.content).trim() : '';
+  const textWithoutLinks = textContent.replace(/https?:\/\/\S+/g,'').replace(/\s+/g,' ').trim();
+  const contentHtml = textWithoutLinks.length > 80
+    ? `<hr class="modal-divider"><div class="md-content">${parseMarkdown(lesson.content)}</div>`
+    : '';
+
+  const hasAnyContent = transcriptionHtml || materialsHtml || contentHtml;
+
+  document.getElementById('modalBody').innerHTML = `
+    <div class="modal-checklist">
+      <div class="modal-checklist-header">
+        <span class="modal-checklist-title">✅ Progresso da aula</span>
+        <span class="modal-checklist-pct" id="mClPct">${clDone}/${clTotal}</span>
+      </div>
+      <div class="modal-checklist-bar"><div class="modal-checklist-fill" id="mClFill" style="width:${clPct}%"></div></div>
+      ${clItems}
+    </div>
+    ${transcriptionHtml}
+    ${materialsHtml}
+    ${contentHtml}
+    ${!hasAnyContent ? '<div class="no-content"><div style="font-size:2rem;margin-bottom:8px">🎬</div><p>Clique em "Assistir aula" para acessar o conteúdo na plataforma.</p></div>' : ''}`;
+
+  document.getElementById('modalOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function modalCl(lessonId, idx, el) {
+  toggleClItem(lessonId, idx);
+  el.classList.toggle('checked');
+  const lesson = COURSE_DATA.sections.flatMap(s=>s.lessons).find(l=>l.id===lessonId);
+  const mat = lesson ? getLessonMaterial(lesson.title) : null;
+  const cl = (mat && mat.checklist) ? mat.checklist : DEFAULT_CHECKLIST;
+  const state = getClState(lessonId);
+  const done = cl.filter((_,i) => state[i]).length;
+  const pct = Math.round(done/cl.length*100);
+  // Update modal progress
+  const fill = document.getElementById('mClFill');
+  const pctEl = document.getElementById('mClPct');
+  if (fill) fill.style.width = pct+'%';
+  if (pctEl) pctEl.textContent = `${done}/${cl.length}`;
+  // Sync card checklist bar
+  const card = document.querySelector(`[data-lid="${lessonId}"]`);
+  if (card) {
+    const f = card.querySelector('.card-checklist-fill'); if(f) f.style.width=pct+'%';
+    const items = card.querySelectorAll('.card-cl-item');
+    if (items[idx]) items[idx].classList.toggle('checked', !!state[idx]);
+  }
+  // Auto-complete card when all items done
+  if (done === cl.length && !completedCards[lessonId]) {
+    completedCards[lessonId] = true;
+    document.getElementById('modalCheck').className = 'modal-check done';
+    if (card) card.classList.add('completed');
+    scheduleSave();
+  } else if (done < cl.length && completedCards[lessonId]) {
+    delete completedCards[lessonId];
+    document.getElementById('modalCheck').className = 'modal-check';
+    if (card) card.classList.remove('completed');
+    scheduleSave();
+  } else {
+    scheduleSave();
+  }
+}
+
+function toggleModalDone() {
+  if (!currentLesson) return;
+  toggleDone(currentLesson.id);
+  document.getElementById('modalCheck').className = 'modal-check' + (completedCards[currentLesson.id]?' done':'');
+}
+
+function closeModal() {
+  document.getElementById('modalOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+  currentLesson = null;
+}
+function handleOverlayClick(e) { if(e.target===document.getElementById('modalOverlay')) closeModal(); }
+
+document.getElementById('filterRow').addEventListener('click', e => {
+  if (e.target.classList.contains('filter-btn')) {
+    document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+    e.target.classList.add('active');
+    currentFilter = e.target.dataset.filter;
+    renderApp();
+  }
+});
+document.getElementById('searchInput').addEventListener('input', e => { currentSearch=e.target.value.trim(); renderApp(); });
+document.addEventListener('keydown', e => { if(e.key==='Escape') closeModal(); });
+
+loadCourse();
+</script>
+</body>
+</html>
