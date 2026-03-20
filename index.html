@@ -184,6 +184,19 @@ body{font-family:'Raleway',sans-serif;background:var(--bg);color:var(--text);min
 .no-content{text-align:center;padding:28px;color:var(--muted);font-size:.86rem}
 .modal-divider{border:none;border-top:1px solid var(--border);margin:16px 0}
 
+/* TRANSCRIPTION MATERIAL */
+.transcription-material{background:rgba(201,169,110,.06);border:1px solid rgba(201,169,110,.2);border-radius:12px;padding:16px;margin-bottom:20px}
+.tm-header{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.tm-icon{font-size:1rem}
+.tm-title{font-family:'Playfair Display',serif;font-weight:600;font-size:.95rem;color:var(--cream);flex:1}
+.tm-badge{font-size:.68rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--gold);background:rgba(201,169,110,.15);border:1px solid rgba(201,169,110,.25);border-radius:100px;padding:2px 9px}
+.tm-summary{font-size:.84rem;color:var(--muted);line-height:1.65;margin-bottom:14px}
+.tm-keypoints{background:var(--surface);border-radius:8px;padding:12px}
+.tm-kp-title{font-size:.7rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+.kp-item{display:flex;align-items:flex-start;gap:8px;margin-bottom:8px;font-size:.83rem;color:var(--muted);line-height:1.5}
+.kp-item:last-child{margin-bottom:0}
+.kp-dot{color:var(--gold);font-size:.5rem;margin-top:5px;flex-shrink:0}
+
 @media(max-width:640px){
   .header-inner{gap:10px}.logo{font-size:1rem}.search-box{max-width:150px}
   .hero h1{font-size:1.8rem}.cards-grid{grid-template-columns:1fr}
@@ -247,6 +260,65 @@ body{font-family:'Raleway',sans-serif;background:var(--bg);color:var(--text);min
 
 <script>
 const MEMBERKIT_BASE = 'https://the-owner-academy.memberkit.com.br/275132-social-media-ia';
+
+// ===== MATERIAIS DE TRANSCRIÇÃO =====
+// Cada entrada tem: keywords (SEO), summary, keyPoints, checklist
+// Keywords são usadas tanto no material de apoio quanto na busca interna
+const LESSON_MATERIALS = {
+  "seja-bem-vindo": {
+    keywords: [
+      "plano de ação","60 dias","contratos recorrentes","alavancas","ima de clientes",
+      "one click","salário automático","ativação","primeiro cliente","escala",
+      "garantia","sócia","checklist","mentalidade","renda extra","social media ia",
+      "micro vitória","conquista","tijolinhos","3 contratos","7 contratos",
+      "curso vivo","desistência","scripts","proposta","digital"
+    ],
+    summary: "Apresentação do plano de ação dos próximos 60 dias: como o curso foi pensado para te levar do zero a 7 contratos recorrentes, sem pular etapas, com suporte completo.",
+    keyPoints: [
+      "🎯 Objetivo: zero a 7 contratos recorrentes em 60 dias",
+      "⚙️ Sistema das 3 alavancas: IMA de Clientes + Tecnologia One Click (IA) + Salário Automático",
+      "📅 4 fases: Ativação (sem. 1) → Habilidades (sem. 2-3) → Clientes (sem. 4) → Escala (sem. 5-8)",
+      "🔄 Curso vivo: novas aulas adicionadas toda semana com base nas dúvidas dos alunos",
+      "🛡️ Garantia de 365 dias se você aplicar tudo que foi ensinado",
+      "🤝 Acompanhamento de sócia por 1 ano — você nunca estará sozinha nessa jornada",
+      "✅ Scripts prontos, checklist de 60 dias e propostas prontas fornecidos"
+    ],
+    checklist: [
+      "Assistir a aula completa",
+      "Baixar o Checklist de 60 dias",
+      "Entrar no Grupo de Alunos",
+      "Salvar o Calendário de Aulas Ao Vivo",
+      "Definir seu horário fixo de estudo diário",
+      "Escrever seu 'porquê' — por que você comprou esse curso?"
+    ]
+  }
+  // Próximas transcrições serão adicionadas aqui
+};
+
+// Busca o material de uma aula pelo título
+function getLessonMaterial(title) {
+  if (!title) return null;
+  const norm = t => t.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,' ').trim();
+  const normTitle = norm(title);
+  for (const [key, mat] of Object.entries(LESSON_MATERIALS)) {
+    const normKey = norm(key.replace(/-/g,' '));
+    // Match by slug or by keywords overlap
+    if (normTitle.includes(normKey) || normKey.includes(normTitle.substring(0,8))) return mat;
+    // Check if any keyword matches the title
+    if (mat.keywords.some(k => normTitle.includes(norm(k)) || norm(k).includes(normTitle.substring(0,6)))) return mat;
+  }
+  return null;
+}
+
+// SEO: verifica se a query bate com keywords de uma aula
+function lessonMatchesKeywords(lesson, query) {
+  if (!query) return false;
+  const norm = t => t.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+  const q = norm(query);
+  const mat = getLessonMaterial(lesson.title);
+  if (!mat) return false;
+  return mat.keywords.some(k => norm(k).includes(q) || q.includes(norm(k)));
+}
 
 // Mapa de nomes e ordem dos módulos
 const MODULE_META = [
@@ -318,8 +390,12 @@ function getSectionProgress(section) {
 }
 function lessonMatchesFilter(lesson) {
   if (currentSearch) {
-    const q = currentSearch.toLowerCase();
-    if (!lesson.title.toLowerCase().includes(q) && !(lesson.content||'').toLowerCase().includes(q)) return false;
+    const q = currentSearch.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+    const inTitle = lesson.title.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').includes(q);
+    const inContent = (lesson.content||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').includes(q);
+    // SEO: também busca nas keywords da transcrição
+    const inKeywords = lessonMatchesKeywords(lesson, currentSearch);
+    if (!inTitle && !inContent && !inKeywords) return false;
   }
   if (currentFilter === 'video') return !!lesson.video;
   if (currentFilter === 'content') return !!(lesson.content && lesson.content.trim());
@@ -510,37 +586,65 @@ function openLesson(lessonId) {
   document.getElementById('modalWatchRow').style.display = 'flex';
   document.getElementById('modalWatchBtn').href = getMemberkitUrl(lesson);
 
+  // Use checklist from transcription if available, otherwise default
+  const lessonMat = getLessonMaterial(lesson.title);
+  const activeChecklist = (lessonMat && lessonMat.checklist) ? lessonMat.checklist : DEFAULT_CHECKLIST;
   const clState = getClState(lessonId);
-  const {done:clDone,total:clTotal,pct:clPct} = getClProgress(lessonId);
-  const clItems = DEFAULT_CHECKLIST.map((item,i) =>
+  const clTotal = activeChecklist.length;
+  const clDone = activeChecklist.filter((_,i) => clState[i]).length;
+  const clPct = Math.round(clDone/clTotal*100);
+  const clItems = activeChecklist.map((item,i) =>
     `<div class="modal-cl-item ${clState[i]?'checked':''}" onclick="modalCl(${lessonId},${i},this)">
       <div class="modal-cl-dot"></div><span class="modal-cl-text">${item}</span></div>`).join('');
 
+  // Transcription material section
+  let transcriptionHtml = '';
+  if (lessonMat) {
+    const kpItems = lessonMat.keyPoints.map(k =>
+      `<div class="kp-item"><span class="kp-dot">◆</span><span>${k}</span></div>`).join('');
+    transcriptionHtml = `
+      <div class="transcription-material">
+        <div class="tm-header">
+          <span class="tm-icon">📝</span>
+          <span class="tm-title">Material de Apoio</span>
+          <span class="tm-badge">Da transcrição</span>
+        </div>
+        <p class="tm-summary">${lessonMat.summary}</p>
+        <div class="tm-keypoints">
+          <div class="tm-kp-title">Pontos-chave desta aula</div>
+          ${kpItems}
+        </div>
+      </div>`;
+  }
+
+  // Links and files
   const links = extractLinks(lesson.content||'');
-  const matItems = [...links.map(l => {
-    const m = getLinkMeta(l.href);
-    return `<a class="modal-material-item" href="${l.href}" target="_blank" rel="noopener">
-      <div class="modal-material-icon ${m.bg}">${m.icon}</div>
-      <div class="modal-material-text"><span class="modal-material-label">${l.text}</span><span class="modal-material-type">${m.type}</span></div>
-      <span class="modal-material-arrow">↗</span></a>`;
-  }), ...(lesson.files||[]).map(f =>
-    `<a class="modal-material-item" href="${f.url}" target="_blank" rel="noopener">
-      <div class="modal-material-icon icon-bg-gold">📎</div>
-      <div class="modal-material-text"><span class="modal-material-label">${f.filename||'Arquivo'}</span><span class="modal-material-type">Arquivo anexo</span></div>
-      <span class="modal-material-arrow">↓</span></a>`)];
+  const matItems = [
+    ...links.map(l => {
+      const m = getLinkMeta(l.href);
+      return `<a class="modal-material-item" href="${l.href}" target="_blank" rel="noopener">
+        <div class="modal-material-icon ${m.bg}">${m.icon}</div>
+        <div class="modal-material-text"><span class="modal-material-label">${l.text}</span><span class="modal-material-type">${m.type}</span></div>
+        <span class="modal-material-arrow">↗</span></a>`;
+    }),
+    ...(lesson.files||[]).map(f =>
+      `<a class="modal-material-item" href="${f.url}" target="_blank" rel="noopener">
+        <div class="modal-material-icon icon-bg-gold">📎</div>
+        <div class="modal-material-text"><span class="modal-material-label">${f.filename||'Arquivo'}</span><span class="modal-material-type">Arquivo anexo</span></div>
+        <span class="modal-material-arrow">↓</span></a>`)
+  ];
+  const materialsHtml = matItems.length
+    ? `<div class="modal-materials"><div class="modal-materials-title">📚 Materiais desta aula</div>${matItems.join('')}</div>`
+    : '';
 
-  const materialsHtml = matItems.length ? `<div class="modal-materials"><div class="modal-materials-title">📚 Materiais desta aula</div>${matItems.join('')}</div>` : '';
-
-  // Mostra conteúdo de texto APENAS se houver texto real além dos links
+  // Text content
   const textContent = lesson.content ? stripHtml(lesson.content).trim() : '';
-  const textWithoutLinks = textContent
-    .replace(/https?:\/\/\S+/g, '')
-    .replace(/👉🏻|👉|→|->|←|↗|↓/g, '')
-    .replace(/\s+/g, ' ').trim();
-  const hasRealText = textWithoutLinks.length > 80;
-  const contentHtml = hasRealText
+  const textWithoutLinks = textContent.replace(/https?:\/\/\S+/g,'').replace(/\s+/g,' ').trim();
+  const contentHtml = textWithoutLinks.length > 80
     ? `<hr class="modal-divider"><div class="md-content">${parseMarkdown(lesson.content)}</div>`
     : '';
+
+  const hasAnyContent = transcriptionHtml || materialsHtml || contentHtml;
 
   document.getElementById('modalBody').innerHTML = `
     <div class="modal-checklist">
@@ -551,8 +655,10 @@ function openLesson(lessonId) {
       <div class="modal-checklist-bar"><div class="modal-checklist-fill" id="mClFill" style="width:${clPct}%"></div></div>
       ${clItems}
     </div>
+    ${transcriptionHtml}
     ${materialsHtml}
-    ${contentHtml || (!materialsHtml ? '<div class="no-content"><div style="font-size:2rem;margin-bottom:8px">🎬</div><p>Clique em "Assistir aula" para acessar o conteúdo na plataforma.</p></div>' : '')}`;
+    ${contentHtml}
+    ${!hasAnyContent ? '<div class="no-content"><div style="font-size:2rem;margin-bottom:8px">🎬</div><p>Clique em "Assistir aula" para acessar o conteúdo na plataforma.</p></div>' : ''}`;
 
   document.getElementById('modalOverlay').classList.add('open');
   document.body.style.overflow = 'hidden';
@@ -561,16 +667,21 @@ function openLesson(lessonId) {
 function modalCl(lessonId, idx, el) {
   toggleClItem(lessonId, idx);
   el.classList.toggle('checked');
-  const {pct,done,total} = getClProgress(lessonId);
+  const lesson = COURSE_DATA.sections.flatMap(s=>s.lessons).find(l=>l.id===lessonId);
+  const mat = lesson ? getLessonMaterial(lesson.title) : null;
+  const cl = (mat && mat.checklist) ? mat.checklist : DEFAULT_CHECKLIST;
+  const state = getClState(lessonId);
+  const done = cl.filter((_,i) => state[i]).length;
+  const pct = Math.round(done/cl.length*100);
   const fill = document.getElementById('mClFill');
   const pctEl = document.getElementById('mClPct');
   if (fill) fill.style.width = pct+'%';
-  if (pctEl) pctEl.textContent = `${done}/${total}`;
+  if (pctEl) pctEl.textContent = `${done}/${cl.length}`;
   const card = document.querySelector(`[data-lid="${lessonId}"]`);
   if (card) {
     const f = card.querySelector('.card-checklist-fill'); if(f) f.style.width=pct+'%';
     const items = card.querySelectorAll('.card-cl-item');
-    if (items[idx]) items[idx].classList.toggle('checked', !!getClState(lessonId)[idx]);
+    if (items[idx]) items[idx].classList.toggle('checked', !!state[idx]);
   }
 }
 
