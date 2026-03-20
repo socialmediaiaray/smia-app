@@ -719,7 +719,18 @@ function toggleModule(h) { h.parentElement.classList.toggle('collapsed'); }
 
 function toggleDone(id) {
   completedCards[id] = !completedCards[id];
-  if (!completedCards[id]) delete completedCards[id];
+  if (!completedCards[id]) {
+    delete completedCards[id];
+    // Desmarca todos os itens do checklist
+    if (checklistState[id]) delete checklistState[id];
+  } else {
+    // Marca todos os itens do checklist automaticamente
+    const lesson = COURSE_DATA.sections.flatMap(s=>s.lessons).find(l=>l.id===id);
+    const mat = lesson ? getLessonMaterial(lesson.title) : null;
+    const cl = (mat && mat.checklist) ? mat.checklist : DEFAULT_CHECKLIST;
+    checklistState[id] = {};
+    cl.forEach((_,i) => { checklistState[id][i] = true; });
+  }
   scheduleSave();
   renderApp();
 }
@@ -727,9 +738,28 @@ function toggleDone(id) {
 function cardCl(lessonId, idx, el) {
   toggleClItem(lessonId, idx);
   el.classList.toggle('checked');
-  const {pct} = getClProgress(lessonId);
+  const lesson = COURSE_DATA.sections.flatMap(s=>s.lessons).find(l=>l.id===lessonId);
+  const mat = lesson ? getLessonMaterial(lesson.title) : null;
+  const cl = (mat && mat.checklist) ? mat.checklist : DEFAULT_CHECKLIST;
+  const state = getClState(lessonId);
+  const done = cl.filter((_,i) => state[i]).length;
+  const pct = Math.round(done/cl.length*100);
+  // Update progress bar
   const card = el.closest('.card');
   if (card) { const f = card.querySelector('.card-checklist-fill'); if(f) f.style.width=pct+'%'; }
+  // Auto-complete card when all checklist items are done
+  if (done === cl.length && !completedCards[lessonId]) {
+    completedCards[lessonId] = true;
+    scheduleSave();
+    renderApp();
+  } else if (done < cl.length && completedCards[lessonId]) {
+    // Auto-uncomplete card if any item is unchecked
+    delete completedCards[lessonId];
+    scheduleSave();
+    renderApp();
+  } else {
+    scheduleSave();
+  }
 }
 
 function openLesson(lessonId) {
@@ -829,15 +859,31 @@ function modalCl(lessonId, idx, el) {
   const state = getClState(lessonId);
   const done = cl.filter((_,i) => state[i]).length;
   const pct = Math.round(done/cl.length*100);
+  // Update modal progress
   const fill = document.getElementById('mClFill');
   const pctEl = document.getElementById('mClPct');
   if (fill) fill.style.width = pct+'%';
   if (pctEl) pctEl.textContent = `${done}/${cl.length}`;
+  // Sync card checklist bar
   const card = document.querySelector(`[data-lid="${lessonId}"]`);
   if (card) {
     const f = card.querySelector('.card-checklist-fill'); if(f) f.style.width=pct+'%';
     const items = card.querySelectorAll('.card-cl-item');
     if (items[idx]) items[idx].classList.toggle('checked', !!state[idx]);
+  }
+  // Auto-complete card when all items done
+  if (done === cl.length && !completedCards[lessonId]) {
+    completedCards[lessonId] = true;
+    document.getElementById('modalCheck').className = 'modal-check done';
+    if (card) card.classList.add('completed');
+    scheduleSave();
+  } else if (done < cl.length && completedCards[lessonId]) {
+    delete completedCards[lessonId];
+    document.getElementById('modalCheck').className = 'modal-check';
+    if (card) card.classList.remove('completed');
+    scheduleSave();
+  } else {
+    scheduleSave();
   }
 }
 
